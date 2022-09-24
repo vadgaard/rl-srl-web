@@ -214,9 +214,11 @@ exec (Init id exps p) = do
     repl e acc = eval e >>= \case
       IntV n
         | n >= 0 -> case acc of
-          ListV ls t  -> return $ ListV (replicate (fromIntegral n) acc) (ListT t)
-          IntV _      -> return $ ListV (replicate (fromIntegral n) acc) (ListT IntT)
+          ListV _ t  -> return $ ListV (replicate (fromIntegral n) acc) (ListT t)
+          IntV _     -> return $ ListV (replicate (fromIntegral n) acc) (ListT IntT)
+          StringV _  -> return $ ListV (replicate (fromIntegral n) acc) (ListT StringT)
         | otherwise -> logError (getExpPos e) NegativeDimension
+      StringV _ -> logError (getExpPos e) $ NonInt64Dimension StringT
       ListV _ t  -> logError (getExpPos e) $ NonInt64Dimension t
 
 -- freeing a list

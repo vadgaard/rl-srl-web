@@ -1,16 +1,23 @@
 module RL.Parser
 ( parseFile
-, parseSrc
+, parseProgram
 , errorPos
 ) where
 
-import System.IO
 import Text.Parsec
 import Text.Parsec.String (Parser)
 
 import Common.Parser
 import Common.Error
 import RL.AST
+
+parseProgram :: String -> Either Error (TypeTab, AST)
+parseProgram s = case parse rlParser "" s of
+  Left err  -> Left $ convertParseError err
+  Right ast -> Right ast
+
+parseFile :: String -> IO (Either Error (TypeTab, AST))
+parseFile path = parseProgram <$> readFile path
 
 rlParser :: Parser (TypeTab,AST)
 rlParser = do
@@ -58,11 +65,3 @@ exitJmp :: Parser Jump
 exitJmp = pos >>= \p -> (\s->s p) <$> do
   reserved "exit"
   return Exit
-
-parseSrc :: String -> Either Error (TypeTab, AST)
-parseSrc s = case parse rlParser "" s of
-  Left err  -> Left $ convertParseError err
-  Right ast -> Right ast
-
-parseFile :: String -> IO (Either Error (TypeTab, AST))
-parseFile path = parseSrc <$> readFile path

@@ -58,6 +58,7 @@ library
     , parsec >=3.0
     , regex-compat >=0.95.1
     , scotty >=0.12
+    , text >=1.2.5.0
     , unordered-containers >=0.2.9
   default-language: Haskell2010
 
@@ -79,6 +80,7 @@ executable rl-srl-web
     , regex-compat >=0.95.1
     , rl-srl-web
     , scotty >=0.12
+    , text >=1.2.5.0
     , unordered-containers >=0.2.9
   default-language: Haskell2010
 
@@ -101,5 +103,6 @@ test-suite rl-srl-web-test
     , regex-compat >=0.95.1
     , rl-srl-web
     , scotty >=0.12
+    , text >=1.2.5.0
     , unordered-containers >=0.2.9
   default-language: Haskell2010
