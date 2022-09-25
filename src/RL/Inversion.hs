@@ -4,10 +4,10 @@ module RL.Inversion
 
 import RL.AST
 
-import Common.Inversion
+import Common.Inversion ( invertStep )
 
-invert :: AST -> AST
-invert = reverse . map (\(l,b) -> (l, invertBlock b))
+invert :: RLProgram -> RLProgram
+invert (RLProgram ttab ast) = RLProgram ttab $ reverse . map (\(l,b) -> (l, invertBlock b)) $ ast
 
 invertBlock :: Block -> Block
 invertBlock (f,s,j) = (invertJump j, invertSteps s, invertFrom f)

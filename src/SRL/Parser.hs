@@ -1,6 +1,6 @@
 module SRL.Parser
 ( parseFile
-, parseSrc
+, parseProgram
 , errorPos
 ) where
 
@@ -57,10 +57,10 @@ untilBlock = do
 
 -- let until and let only have one body
 
-parseSrc :: String -> Either Error (TypeTab, AST)
-parseSrc s = case parse srlParser "" s of
+parseProgram :: String -> Either Error SRLProgram
+parseProgram s = case parse srlParser "" s of
   Left err  -> Left $ convertParseError err
-  Right ast -> Right ast
+  Right (ttab,ast) -> Right $ SRLProgram ttab ast
 
-parseFile :: String -> IO (Either Error (TypeTab, AST))
-parseFile path = parseSrc <$> readFile path
+parseFile :: String -> IO (Either Error SRLProgram)
+parseFile path = parseProgram <$> readFile path

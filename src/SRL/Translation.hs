@@ -21,9 +21,9 @@ genLabel () = gets ((++) "l" . show) <* modify (+1)
 push :: MonadWriter RL.AST m => RL.Label -> RL.Block -> m ()
 push l b = tell [(l, b)]
 
-translate :: TypeTab -> SRL.AST -> String
-translate ttab ast =
-  RL.showAST ttab . evalState (execWriterT $ trlProg ast) $ 0
+translate :: SRLProgram -> RLProgram
+translate (SRLProgram ttab ast) = RLProgram ttab (evalState (execWriterT $ trlProg ast) 0)
+  -- RL.showAST ttab . evalState (execWriterT $ trlProg ast) $ 0
 
 trlProg :: SRL.AST -> TrlMonad ()
 trlProg ast = do

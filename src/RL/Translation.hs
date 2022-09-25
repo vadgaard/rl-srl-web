@@ -75,10 +75,12 @@ p = (0,0)
 -- Actual translation
 -- ==================
 
-translate :: TypeTab -> RL.AST -> String
-translate ttab ast =
+-- translate :: TypeTab -> RL.AST -> (TypeTab, SRL.AST)
+translate :: RLProgram -> SRL.SRLProgram
+translate (RLProgram ttab ast) =
   let (ttab',ast') = runReader (trlProg ast) (genLabelMap ttab ast)
-    in SRL.showAST (ttab ++ ttab') ast'
+    in SRL.SRLProgram (ttab ++ ttab') ast'
+    -- in SRL.showAST (ttab ++ ttab') ast'
 
 trlProg :: RL.AST -> TrlReader (TypeTab,SRL.AST)
 trlProg ast = do

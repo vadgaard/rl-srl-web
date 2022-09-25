@@ -12,8 +12,8 @@ import Control.Monad.Loops (whileM_)
 -- Running the program
 -- ==================
 
-runProgram :: AST -> TypeTab -> (Either Error VarTab, Log)
-runProgram ast ttab = let (vt,ms) = (execVarState vtab . interp) ast in (vt, Log vtab ms)
+runAST :: SRLProgram -> (Either Error VarTab, Log)
+runAST (SRLProgram ttab ast) = let (vt,ms) = (execVarState vtab . interp) ast in (vt, Log vtab ms)
   where vtab = buildVTab ttab
 
 

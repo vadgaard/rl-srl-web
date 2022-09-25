@@ -3,13 +3,10 @@ module Common.Error
 , RuntimeError (..)
 , StaticError  (..)
 , convertParseError
-, module Common.JSON
 ) where
 
 import Common.AST
-import Common.JSON
 import qualified Text.Parsec as Parsec
-import Data.List (intercalate)
 
 data Error
   = RuntimeError Pos RuntimeError
@@ -73,11 +70,12 @@ instance Show Error where
   show (RuntimeError (l,c) e) = "A runtime error occurred at (line "++show l++", column "++show c++"):\n" ++ show e
   show (StaticError (l,c) e)  = "An error occurred at (line "++show l++", column "++show c++"): " ++ show e
   show (Custom e)             = e
-instance JSON Error where
-  stringify (ParseError p e)       = jsonError e p
-  stringify (RuntimeError p e)     = jsonError (show $ RuntimeError p e) p
-  stringify (StaticError p e)      = jsonError (show e) p
-  stringify (Custom e)             = jsonError e (0,0)
+
+-- instance JSON Error where
+--   stringify (ParseError p e)       = jsonError e p
+--   stringify (RuntimeError p e)     = jsonError (show $ RuntimeError p e) p
+--   stringify (StaticError p e)      = jsonError (show e) p
+--   stringify (Custom e)             = jsonError e (0,0)
 
 instance Show RuntimeError where
   show (NonDefinedId id) = "Variable '" ++ id ++ "' is not defined."

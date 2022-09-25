@@ -5,23 +5,33 @@
 
 packages:
 - completed:
-    name: rl-srl
-    version: 0.1.0.0
-    git: https://github.com/LarsVadgaard/RL-SRL.git
-    pantry-tree:
-      size: 30570
-      sha256: 15f59b0ac0a15b46122fa1c1b2fb8d6c1c3e2962db8f7f8d7303ddd0b8060614
-    commit: ca51d6e3a004d4cbc301a5dff53302dbf74486f1
-  original:
-    git: https://github.com/LarsVadgaard/RL-SRL.git
-    commit: ca51d6e3a004d4cbc301a5dff53302dbf74486f1
-- completed:
     hackage: scotty-0.12@sha256:32a4702316f4a90ca2be65a1191b889efcb0415002fb8c7e15c8606efa6bc134,5359
     pantry-tree:
       size: 1701
       sha256: 2ca8f65b151672b911c89bd2eae0de80e395174318c96c0cdc2a7bcd60754d1b
   original:
     hackage: scotty-0.12
+- completed:
+    hackage: wai-middleware-static-0.9.2@sha256:86e242ff17dedd087484a4a32f5c37d3d31beb64b8a82178e3f9477e39b22aff,3153
+    pantry-tree:
+      size: 473
+      sha256: f4df75fc07d0bbd3f079427677c2edd107290fe5662d2d4184440bed5922f730
+  original:
+    hackage: wai-middleware-static-0.9.2
+- completed:
+    hackage: aeson-2.1.1.0@sha256:103ceb1421cd0ffa810bfb1acb1261d60addbde1a041fb5cce0056ff7d7dcdc2,5980
+    pantry-tree:
+      size: 38895
+      sha256: 1bc76a80ce1638fb77e1a948ce7f1e1c89989edfc2413e5225ced36ae78d5a1a
+  original:
+    hackage: aeson-2.1.1.0
+- completed:
+    hackage: generically-0.1@sha256:16d54a08bcdf708395c2200a28ffcba55e90479dc96ed617dbb94f0411f7a7af,1024
+    pantry-tree:
+      size: 232
+      sha256: 302b140ee5ccf6754ab96154486051f9ab989d3cbaa7c9674e1e9f0de7cdd07b
+  original:
+    hackage: generically-0.1
 snapshots:
 - completed:
     size: 619403

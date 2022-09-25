@@ -11,12 +11,12 @@ import Common.Parser
 import Common.Error
 import RL.AST
 
-parseProgram :: String -> Either Error (TypeTab, AST)
+parseProgram :: String -> Either Error RLProgram
 parseProgram s = case parse rlParser "" s of
   Left err  -> Left $ convertParseError err
-  Right ast -> Right ast
+  Right (ttab,ast) -> Right $ RLProgram ttab ast
 
-parseFile :: String -> IO (Either Error (TypeTab, AST))
+parseFile :: String -> IO (Either Error RLProgram)
 parseFile path = parseProgram <$> readFile path
 
 rlParser :: Parser (TypeTab,AST)

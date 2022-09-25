@@ -1,8 +1,20 @@
+{-# LANGUAGE GADTs #-}
 module RL.AST (module RL.AST, module Common.AST) where
 
 import Data.List (intercalate)
 
 import Common.AST
+
+-- =============
+-- An RL program
+-- =============
+
+data RLProgram where
+  RLProgram :: TypeTab -> AST -> RLProgram
+
+instance Show RLProgram where
+  show (RLProgram ttab ast) = showAST ttab ast
+
 
 -- ===
 -- AST

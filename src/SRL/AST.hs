@@ -1,9 +1,20 @@
+{-# LANGUAGE GADTs #-}
 module SRL.AST
   ( module SRL.AST,
     module Common.AST
   ) where
 
 import Common.AST
+
+-- =============
+-- An RL program
+-- =============
+
+data SRLProgram where
+  SRLProgram :: TypeTab -> AST -> SRLProgram
+
+instance Show SRLProgram where
+  show (SRLProgram ttab ast) = showAST ttab ast
 
 
 -- ===

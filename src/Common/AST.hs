@@ -40,6 +40,9 @@ showTab mtab =
 sort' :: Ord a => [(a, b)] -> [(a, b)]
 sort' = sortBy (compare `on` fst)
 
+emptyVarTab :: VarTab
+emptyVarTab = M.empty
+
 -- Statements
 data Step = Update Id UpdOp Exp Pos
           | Push Id Id Pos
@@ -54,6 +57,7 @@ instance Show Step where
   show (Update id op e _) = show id ++ show op ++ show e
   show (Push id1 id2 _)   = "push " ++ show id1 ++ " " ++ show id2
   show (Pop id1 id2 _)    = "pop "  ++ show id1 ++ " " ++ show id2
+  show (Reverse id _)     = "reverse "  ++ show id
   show (Init id dim _)    = "init " ++ id ++ " " ++ showIdx dim
   show (Free id dim _)    = "free " ++ id ++ " " ++ showIdx dim
   show (Swap id1 id2 _)   = "swap " ++ show id1 ++ " " ++ show id2
@@ -62,6 +66,7 @@ getStepPos :: Step -> Pos
 getStepPos (Update _ _ _ p) = p
 getStepPos (Push _ _ p)     = p
 getStepPos (Pop _ _ p)      = p
+getStepPos (Reverse _ p)    = p
 getStepPos (Swap _ _ p)     = p
 getStepPos (Skip p)         = p
 getStepPos (Init _ _ p)     = p
