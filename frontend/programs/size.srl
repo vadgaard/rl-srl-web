@@ -1,0 +1,15 @@
+list int l
+int a
+
+from empty l
+do
+  a += size l
+  push a l
+loop .
+until size l = 10
+
+from a = 0 do
+  l[a] *= 2
+  a += 1
+loop .
+until a = size l

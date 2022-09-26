@@ -1,0 +1,10 @@
+list int N
+int n
+from empty N do
+  push n N
+loop .
+until size N = 10
+n += null N
+push n N
+n += null N
+N[1] += null n

@@ -1,0 +1,3 @@
+start: entry
+  skip
+  exit

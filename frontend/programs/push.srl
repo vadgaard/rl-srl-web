@@ -1,0 +1,10 @@
+list int l
+int n
+
+from empty l do
+  n += size l + 1
+  push n l
+loop .
+until size l = 10
+
+pop n l

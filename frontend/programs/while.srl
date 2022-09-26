@@ -1,0 +1,7 @@
+int v int w
+
+from (v = 0 && w = 0) do
+  v += 1
+loop
+  w += 1
+until w = 0

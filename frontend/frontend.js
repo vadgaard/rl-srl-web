@@ -168,6 +168,7 @@
         if (checkRequest !== null)
             return;
         disableEditor(aceEditor);
+        aceOutput.getSession().setValue('');
         checkRequest = $.ajax(
             { url: SERVER_URL + "/api",
               method: "POST",
@@ -213,7 +214,7 @@
     
     function handleCheckResponse(response) {
         // outputwindow.html('');
-        aceOutput.getSession().setValue('');
+        // aceOutput.getSession().setValue('');
         errorwindow.html('');
         if (response.error) {
             errorwindow.html('<pre><samp>' + response.error + '</samp></pre>');
@@ -346,18 +347,6 @@
         themeSelect.change(onThemeSelectChange);
 
         query = getQueryParameters();
-        if ("script" in query)
-        {
-            aceEditor.getSession().setValue(query.script);
-        } else {
-            var script = optionalLocalStorageGetItem("script");
-            if (script !== null) {
-                aceEditor.getSession().setValue(script);
-            }
-            else {
-                aceEditor.getSession().setValue('');
-            }
-        }
         if ("lang" in query && (query.lang == 'rl' || query.lang == 'srl'))
         {
             lang = query.lang
@@ -368,6 +357,59 @@
             }
             else {
                 lang = 'srl'
+            }
+        }
+        if ("script" in query)
+        {
+            aceEditor.getSession().setValue(query.script);
+        } else {
+            var script = optionalLocalStorageGetItem("script");
+            if (script !== null) {
+                aceEditor.getSession().setValue(script);
+            }
+            else {
+                if (lang == 'srl') {
+                    aceEditor.getSession().setValue(
+`// Compute the nth fibonacci pair
+
+int n
+int v int w
+
+n ^= 16
+w ^= 1
+from (v = 0) do
+  v += w
+  swap v w
+  n -= 1
+loop .
+until (n = 0 || v > w)`
+                    );
+                }
+                else if (lang == 'rl') {
+                    aceEditor.getSession().setValue(
+`// Compute the nth fibonacci pair
+
+int n
+int v int w
+
+start: entry
+  n ^= 16
+  w ^= 1
+goto loop
+
+loop: fi (v = 0) start loop
+  v += w
+  swap v w
+  n -= 1
+if (n = 0 || v > w) end loop
+
+end: from loop
+exit`
+                    );
+                }
+                else {
+                    aceEditor.getSession().setValue('');
+                }
             }
         }
         

@@ -1,0 +1,7 @@
+string s
+string t
+string r
+
+s += "Hello World!"
+t += "World!"
+r += s - t
