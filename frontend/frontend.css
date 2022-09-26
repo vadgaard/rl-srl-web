@@ -1,10 +1,10 @@
 :root {
-    --accent1: #285588;
-    --accent2: #fffdc0;
-    --accent3: #ea5b4c;
-    --accent4: #2a2748;
-    --accent5: #e75087;
-    --accent6: #b6c667;
+    --accent1: #b5f7f1; /* navbar background */
+    --accent2: #085b6e; /* navbar text */
+    --accent3: #097291; /* navbar border */
+    --accent4: var(--accent2); /* button background */
+    --accent5: var(--accent1); /* button text */
+    --accent6: var(--accent3); /* button hover */
 }
 
 html {
@@ -57,7 +57,7 @@ body {
 #control {
     margin:0px;
     background-color: var(--accent1);
-    border-bottom: 4px solid var(--accent1)
+    border-bottom: 4px solid var(--accent3)
 }
 #control button {
     border: none;
@@ -65,8 +65,11 @@ body {
     cursor: pointer;
     margin: 0px 5px;
     padding: 0px 10px;
-    background-color: var(--accent3);
-    color: var(--accent2);
+    background-color: var(--accent4);
+    color: var(--accent5);
+}
+#control button:hover {
+    background-color: var(--accent6);
 }
 #logo {
     height: 45px;
@@ -99,10 +102,6 @@ body {
 
 #control li .el {
     margin-right: 5px;
-}
-
-#control button:hover {
-    background-color: #5886C4;
 }
 
 #main {
