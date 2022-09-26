@@ -1,0 +1,6 @@
+[submodule "frontend/ace-builds"]
+	path = frontend/ace-builds
+	url = https://github.com/ajaxorg/ace-builds
+[submodule "frontend/ace"]
+	path = frontend/ace
+	url = https://github.com/ajaxorg/ace-builds

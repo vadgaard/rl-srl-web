@@ -1,3 +1,67 @@
+<!DOCTYPE html>
 <html>
-    index
+  <head>
+    <meta charset="UTF-8" />
+    <title>RL|SRL</title>
+    <script src="jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="ace/src-min/ace.js"></script>
+    <script type="text/javascript" charset="utf-8" src="mode-rlsrl.js"></script>
+    <script type="text/javascript" charset="utf-8" src="ace/src-min/ext-themelist.js"></script>
+    <script type="text/javascript" charset="utf-8" src="config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="frontend.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700italic,400italic,700' rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700"/>
+    <link rel="stylesheet" type="text/css" href="frontend.css" />
+    <link rel="stylesheet" type="text/css" href="rlsrl.css" />
+    <link rel="stylesheet" type="text/css" href="elusive-icons/css/elusive-icons.css" />
+  </head>
+  <body>
+    <form id="control" style="position:absolute; top:0; left:0; right:0; height:45px;">
+      <div id="logo">RL|SRL</div>
+      <ul>
+        <li>
+          <button type="button" id="lang" title="Change language"><i class="el el-wrench"></i><span id="langtext">...</span></button>
+        </li>
+        <li>
+          <button type="button" id="run" title="Run (you can also press Ctrl+Enter or Cmd+Enter)"><i class="el el-play"></i>Run</button>
+        </li>
+        <li>
+          <button type="button" id="invert" title="Invert"><i class="el el-repeat"></i>Invert</button>
+        </li>
+        <li>
+          <button type="button" id="translate" title="Translate"><i class="el el-refresh"></i>Translate</button>
+        </li>
+        <!--
+        <li>
+          <button type="button" id="report" title="Report bug (send email"><i class="el el-exclamation-sign"></i>Report Bug</button>
+        </li>
+        <li>
+          <button type="button" id="help" title="Help"><i class="el el-info-circle"></i>Help</button>
+        </li>
+        -->
+        <li>
+          <select id="theme" title="Theme"></select>
+        </li>
+      </ul>
+      <!-- <input id="enhance" type="checkbox" title="Enhance experience!"></input>
+      <a href="http://twelf.org/"><img src="mediumelf.png" id="elf" /></a> -->
+    </form>
+    <div id="main" style="position:absolute; top:45px; left:0; right:0; bottom:0;" >
+      <div id="left" style="position:absolute;top:0px;left:0;right:0;bottom:0;width:0;">
+        <div id="editor"
+             style="position:absolute;top:0px;left:0;right:0;bottom:0;">
+        </div>
+        <div id="hsplitter"
+             style="position:absolute;top:0px;left:0;right:0;bottom:0;width:100%;cursor:ns-resize;"></div>
+        <div id="errorwindow"
+             style="position:absolute;top:0px;left:0;right:0;bottom:0;">
+        </div>
+      </div>
+      <div id="vsplitter"
+           style="position:absolute;top:0px;left:0;right:0;bottom:0;cursor:ew-resize;"></div>
+      <div id="outputwindow"
+           style="position:absolute;top:0px;left:0;right:0;bottom:0;">
+      </div>
+    </div>
+  </body>
 </html>

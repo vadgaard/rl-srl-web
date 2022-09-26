@@ -1,0 +1,24 @@
+table {
+    page-break-inside: avoid;
+}
+
+h1:not(:first-child) {
+    page-break-before: always;
+}
+
+#prooftable {
+    padding: 0em 1em;
+}
+
+.exotic {
+    color: magenta;
+}
+
+.hole {
+    color: red;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
