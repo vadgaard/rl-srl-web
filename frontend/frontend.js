@@ -134,6 +134,8 @@
         var theme = theme || optionalLocalStorageGetItem('theme') || 'ace/theme/chrome';
         aceEditor.setTheme(theme);
         aceOutput.setTheme(theme)
+        // TODO: change general CSS to match theme
+        svgData.css('fill', logo.css('color'))
         optionalLocalStorageSetItem('theme', theme);
     }
     
@@ -165,6 +167,7 @@
         resetMarkers();
         if (checkRequest !== null)
             return;
+        disableEditor(aceEditor);
         checkRequest = $.ajax(
             { url: SERVER_URL + "/api",
               method: "POST",
@@ -180,7 +183,10 @@
                 errorwindow.html("Request failed with error: " + textStatus);
                 errorwindow.scrollTop(errorwindow.prop("scrollHeight"));
             })
-            .always(function() { checkRequest = null; });
+            .always(function() { 
+                enableEditor(aceEditor)
+                checkRequest = null;
+            });
     }
 
     function highlightErrors(row, col) {
@@ -270,6 +276,17 @@
         });
     }
     
+    function disableEditor(editor) {
+        editor.setReadOnly(true);
+        editor.renderer.$cursorLayer.element.style.display = "none";
+        editor.setHighlightActiveLine(false);
+    }
+    function enableEditor(editor) {
+        editor.setReadOnly(false);
+        editor.renderer.$cursorLayer.element.style.display = "";
+        editor.setHighlightActiveLine(true);
+    }
+    
     $().ready(function() {
         main            = $("#main");
         editor          = $("#editor");
@@ -291,6 +308,9 @@
         printButton     = $("#print");
         enhanceCheckBox = $("#enhance");
         themeSelect     = $("#theme");
+        navbar          = $("#control");
+        logo            = $("#logo");
+        svgData         = $("#haskell-path");
         
         aceEditor = ace.edit("editor");
         aceOutput = ace.edit("outputwindow")
@@ -303,10 +323,8 @@
             },
             readOnly: true
         });
-        aceOutput.setReadOnly(true);
+        disableEditor(aceOutput)
         aceOutput.renderer.setShowGutter(false);
-        aceOutput.renderer.$cursorLayer.element.style.display = "none";
-        aceOutput.setHighlightActiveLine(false);
         aceOutput.getSession().setValue('');
 
         var themeList = ace.require("ace/ext/themelist");

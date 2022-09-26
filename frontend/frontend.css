@@ -1,3 +1,12 @@
+:root {
+    --accent1: #285588;
+    --accent2: #fffdc0;
+    --accent3: #ea5b4c;
+    --accent4: #2a2748;
+    --accent5: #e75087;
+    --accent6: #b6c667;
+}
+
 html {
     height: 100%;
     width: 100%;
@@ -19,10 +28,55 @@ body {
     font-size: 14px;
 }
 
+/*
 #control {
     margin:0px;
-    background-color: #b43a73;
-    border-bottom: 4px solid #cc4986;
+    background-color: var(--accent1);
+    border-bottom: 4px solid var(--accent2)
+}
+#control button {
+    border: none;
+    height: 100%;
+    cursor: pointer;
+    margin: 0px 5px;
+    padding: 0px 10px;
+    background-color: var(--accent5);
+    color: var(--accent1);
+}
+#logo {
+    height: 45px;
+    display: inline;
+    height: 100%;
+    vertical-align: middle;
+    font-size: 18px;
+    margin: 0px 20px;
+    color: var(--accent3);
+    font-weight: bold;
+}
+*/
+#control {
+    margin:0px;
+    background-color: var(--accent1);
+    border-bottom: 4px solid var(--accent1)
+}
+#control button {
+    border: none;
+    height: 100%;
+    cursor: pointer;
+    margin: 0px 5px;
+    padding: 0px 10px;
+    background-color: var(--accent3);
+    color: var(--accent2);
+}
+#logo {
+    height: 45px;
+    display: inline;
+    height: 100%;
+    vertical-align: middle;
+    font-size: 18px;
+    margin: 0px 20px;
+    color: var(--accent2);
+    font-weight: bold;
 }
 
 #control ul {
@@ -36,19 +90,7 @@ body {
     display: inline;
 }
 
-
-#logo {
-    height: 45px;
-    display: inline;
-    height: 100%;
-    vertical-align: middle;
-    font-size: 18px;
-    margin: 0px 20px;
-    color: #eee;
-    font-weight: bold;
-}
-
-#elf {
+#haskell {
     width:auto;
     height:40px;
     float:right;
@@ -57,16 +99,6 @@ body {
 
 #control li .el {
     margin-right: 5px;
-}
-
-#control button {
-    border: none;
-    height: 100%;
-    cursor: pointer;
-    margin: 0px 5px;
-    padding: 0px 10px;
-    background-color: #cc4986;
-    color: #fff;
 }
 
 #control button:hover {
