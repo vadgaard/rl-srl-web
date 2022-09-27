@@ -7,15 +7,13 @@ import Data.Function (on)
 import qualified Data.HashMap.Strict as M
 
 -- values
-data Value = IntV Int64 | StringV String | ListV [Value] Type deriving Eq
+data Value = IntV Int64 | ListV [Value] Type deriving Eq
 instance Show Value where
   show (IntV n)       = show n
-  show (StringV s)    = show s
   show (ListV ls _)   = show ls
 isClear :: Value -> Bool
 isClear (IntV n)      = n == 0
 isClear (ListV ls _)  = null ls
-isClear (StringV s)   = null s
 
 -- ======
 -- VarTab
@@ -181,7 +179,7 @@ instance Show UnOp where
 -- ================
 
 type TypeTab = [(String, Type)]
-data Type = IntT | StringT | ListT Type deriving Eq
+data Type = IntT | ListT Type deriving Eq
 showTypeTab :: TypeTab -> String
 showTypeTab = (++"\n") . concatMap (\(name,t) -> show t ++ " " ++ name ++ "\n") . sort'
 
@@ -192,18 +190,15 @@ hasDupDec = hasDupDec' . map fst
 
 instance Show Type where
   show IntT       = "int"
-  show StringT    = "string"
   show (ListT tp) = "list " ++ show tp
 buildVTab :: TypeTab -> VarTab
 buildVTab = M.map getDefaultValue . M.fromList
 getType :: Value -> Type
 getType (IntV _)    = IntT
-getType (StringV _) = StringT
 getType (ListV _ t) = t
 
 getDefaultValue :: Type -> Value
 getDefaultValue IntT    = IntV 0
-getDefaultValue StringT = StringV []
 getDefaultValue listt   = ListV [] listt
 
 -- =======
@@ -234,6 +229,7 @@ mapBinOp And     = \n m -> boolToInt (intToBool n && intToBool m)
 mapBinOp Or      = \n m -> boolToInt (intToBool n || intToBool m)
 
 -- StringBinOp
+mapSBinOp :: BinOp -> [a] -> [a] -> [a]
 mapSBinOp Plus = (++)
 
 mapUnOp Neg  = negate

@@ -66,26 +66,20 @@ data StaticError
   | NoExit
 
 instance Show Error where
-  show (ParseError (l,c) e)   = e
+  show (ParseError _ e)   = e
   show (RuntimeError (l,c) e) = "A runtime error occurred at (line "++show l++", column "++show c++"):\n" ++ show e
   show (StaticError (l,c) e)  = "An error occurred at (line "++show l++", column "++show c++"): " ++ show e
   show (Custom e)             = e
 
--- instance JSON Error where
---   stringify (ParseError p e)       = jsonError e p
---   stringify (RuntimeError p e)     = jsonError (show $ RuntimeError p e) p
---   stringify (StaticError p e)      = jsonError (show e) p
---   stringify (Custom e)             = jsonError e (0,0)
-
 instance Show RuntimeError where
-  show (NonDefinedId id) = "Variable '" ++ id ++ "' is not defined."
-  show (IndexOnNonList id) = "Tried indexing on non-list identifier: " ++ id
+  show (NonDefinedId name) = "Variable '" ++ name ++ "' is not defined."
+  show (IndexOnNonList name) = "Tried indexing on non-list identifier: " ++ name
   show IndexOnNonListExp = "Tried indexing on non-list value"
   show NonInt64Index = "Tried indexing with non-integer value"
-  show (SelfAbuse id) = "'" ++ show id ++ "' occurs on both sides of an update."
-  show (PopPushToSelf (Id id _)) = "Variable '" ++ id ++ "' occurs in both operands in push or pop."
-  show (ListInOwnIndex (Id id _)) = "List variable '" ++ id ++ "' used as index on itself in an update."
-  show (DimSelfAbuse id) = "Dimension list contains variable '" ++ id ++ "' being (de)allocated."
+  show (SelfAbuse name) = "'" ++ show name ++ "' occurs on both sides of an update."
+  show (PopPushToSelf (Id name _)) = "Variable '" ++ name ++ "' occurs in both operands in push or pop."
+  show (ListInOwnIndex (Id name _)) = "List variable '" ++ name ++ "' used as index on itself in an update."
+  show (DimSelfAbuse name) = "Dimension list contains variable '" ++ name ++ "' being (de)allocated."
   show NegativeIndex = "Index is negative"
   show IndexOutOfBounds = "Index out of bounds"
   show (PushToNonList idx) = "Tried pushing to non-list identifier: " ++ show idx
@@ -102,18 +96,18 @@ instance Show RuntimeError where
   show DivHasRest = "Division has rest."
   show MultByZero = "Multiplication update by zero."
   show (UpdateOnNonInt64 idx t) = "Tried updating non-" ++ show IntT ++ " identifier '" ++ show idx ++ "' of type " ++ show t
-  show (InitOnNonList id) = "Tried initializing non-list identifier '" ++ id ++ "'"
-  show (InitNonEmptyList id) = "Tried initliazing non-empty list identifier '" ++ id ++ "'"
+  show (InitOnNonList name) = "Tried initializing non-list identifier '" ++ name ++ "'"
+  show (InitNonEmptyList name) = "Tried initliazing non-empty list identifier '" ++ name ++ "'"
   show ConflictingDimensions = "The number of dimensions specified does not match depth of list type."
   show ConflictingLengths = "The lengths specified do not match lengths of the of list."
   show (StringLength s t) = "Can't remove string \"" ++ t ++ "\" from \"" ++ s ++ "\" since, the first string is shorter than the second." 
   show (StringSuffix s t) = "\"" ++ s ++ "\" does not have \"" ++ t ++ "\" as suffix, thus the chosen suffix can't be removed."
   show NegativeDimension = "Encountered negative dimension"
   show (NonInt64Dimension t) = "Expected dimension size to be of type " ++ show IntT ++ ", received " ++ show t
-  show (FreeOnNonList id) = "Tried freeing non-list identifier '" ++ id ++ "'."
-  show (FreeNonEmptyList id) = "Tried freeing non-empty list identifier '" ++ id ++ "'."
-  show (NonReversable id)    = show id ++ " is a non-reversable value."
-  show (AssertionFailed exp e r) = "Assertion '" ++ show exp ++ "' expected " ++ show e ++ ", but evaluated to " ++ show r
+  show (FreeOnNonList name) = "Tried freeing non-list identifier '" ++ name ++ "'."
+  show (FreeNonEmptyList name) = "Tried freeing non-empty list identifier '" ++ name ++ "'."
+  show (NonReversable name)    = show name ++ " is a non-reversable value."
+  show (AssertionFailed expr e r) = "Assertion '" ++ show expr ++ "' expected " ++ show e ++ ", but evaluated to " ++ show r
   show (FromFail f e) = "Come-from assertion not consistent.\n Coming from " ++ f ++ ", but expected " ++ e ++ "."
 
 instance Show StaticError where

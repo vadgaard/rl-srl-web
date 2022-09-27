@@ -19,7 +19,6 @@ languageDef =
            , Token.identLetter      = alphaNum <|> oneOf ['_', '\'']
            , Token.reservedNames    = [ "list"
                                       , "int"
-                                      , "string"
                                       , "entry"
                                       , "from"
                                       , "fi"
@@ -77,7 +76,6 @@ integer       = fromIntegral <$>
 colon         = Token.colon         lexer
 comma         = Token.comma         lexer
 whiteSpace    = Token.whiteSpace    lexer
-stringlit     = Token.stringLiteral lexer
 
 -- identifier
 identifier :: Parser Id
@@ -105,7 +103,6 @@ typedec = do
 
 typet :: Parser Type
 typet = (reserved "int"    >> return IntT)
-    <|> (reserved "string" >> return StringT)
     <|> (reserved "list"   >> ListT <$> typet)
     <|> (ListT <$> brackets typet)
 
@@ -199,8 +196,7 @@ operators = [
 termStd = pos >>= \p ->(\s->s p)
    <$> (Parens       <$> parens expression
    <|> Var           <$> identifier'
-   <|> Lit . IntV    <$> integer
-   <|> Lit . StringV <$> stringlit)
+   <|> Lit . IntV    <$> integer)
 
 termLst = do
   p   <- pos

@@ -29,13 +29,6 @@ rd (Id name exps) p = gets (M.lookup name) >>= \case
 
 getIdx :: Value -> Exp -> VarState Value
 getIdx (IntV _)      idx = logError (getExpPos idx) IndexOnNonListExp
-getIdx (StringV s)   idx = eval idx >>= \case
-  IntV i | i < 0                -> logError (getExpPos idx) NegativeIndex
-         | n <- (fromIntegral . length) s :: Int64,
-            i >= n              -> logError (getExpPos idx) IndexOutOfBounds
-         | otherwise, 
-            i' <- fromIntegral i -> return $ StringV $ [s !! i']
-  _ -> logError (getExpPos idx) NonInt64Index
 getIdx (ListV lst _) idx = eval idx >>= \case
   IntV i | i < 0     -> logError (getExpPos idx) NegativeIndex
     | otherwise -> case index lst i of
@@ -80,6 +73,7 @@ adjust' op (e:es) vo = do
   where replace :: [Value] -> Int64 -> Value -> [Value]
         replace (_:vs) 0 nv = nv:vs
         replace (v:vs) i nv = v : replace vs (i-1) nv
+        replace [] _ _ = []
 
 -- ==========
 -- Statements
@@ -95,13 +89,11 @@ exec (Update (Id name is) op e p) = do
   v1 <- rd (Id name is) p
   n <- case v1 of
     IntV n    -> return n
-    StringV s -> return 0
     w         -> logError p $ UpdateOnNonInt64 (Id name is) (getType w)
 
   v2 <- eval e
   m <- case v2 of
     IntV m    -> return m
-    StringV t -> return 0
     w         -> logError p $ NonInt64Exp (getType w)
 
   case op of
@@ -191,7 +183,6 @@ exec (Swap id1 id2 p) = do
 exec (Reverse name p) = do
   rd name p >>= \case
     IntV _    -> logError p $ NonReversable name
-    StringV s -> adjust (const $ StringV (reverse s)) name p
     ListV v t -> adjust (const $ ListV (reverse v) t) name p
   
 
@@ -220,9 +211,7 @@ exec (Init name exps p) = do
         | n >= 0 -> case acc of
           ListV _ t  -> return $ ListV (replicate (fromIntegral n) acc) (ListT t)
           IntV _     -> return $ ListV (replicate (fromIntegral n) acc) (ListT IntT)
-          StringV _  -> return $ ListV (replicate (fromIntegral n) acc) (ListT StringT)
         | otherwise -> logError (getExpPos e) NegativeDimension
-      StringV _ -> logError (getExpPos e) $ NonInt64Dimension StringT
       ListV _ t  -> logError (getExpPos e) $ NonInt64Dimension t
 
 -- freeing a list
@@ -283,13 +272,6 @@ eval (Binary op l r p)
     vr <- eval r
     case (vl, vr) of
       (IntV n, IntV m) -> return $ IntV (mapBinOp op n m)
-      (StringV s, StringV t) -> case op of
-        Minus -> do
-          unless (length t <= length s) $ logError p $ StringLength s t
-          let st = reverse . take (length t) . reverse $ s
-          unless (t==st) $ logError p $ StringSuffix s t
-          return $ StringV $ reverse . drop (length t) . reverse $ s
-        _     -> return $ StringV (mapSBinOp op s t)
       (ListV ls1 t1, ListV ls2 t2)
         | op == Equal && t1 == t2 -> return $ IntV (boolToInt $ ls1==ls2)
         | op == Neq   && t1 == t2 -> return $ IntV (boolToInt $ ls1/=ls2)
@@ -335,12 +317,6 @@ eval (Unary op exp p)
         v:ls  -> return v
       Empty -> return $ IntV (boolToInt . null $ ls)
       Size  -> return $ IntV (fromIntegral . length $ ls)
-    StringV s -> case op of
-      Top   -> case s of
-        []   -> logError p EmptyTop
-        v:ls -> return $ StringV [v]
-      Empty -> return $ IntV (boolToInt . null $ s)
-      Size  -> return $ IntV (fromIntegral . length $ s)
     w  -> logError p $ NonListExp (getType w)
 
 -- index
