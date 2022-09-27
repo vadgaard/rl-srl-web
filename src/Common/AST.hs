@@ -2,7 +2,6 @@ module Common.AST (module Common.AST, Int64) where
 
 import Data.Bits (xor)
 import Data.Int
-import Data.Word
 import Data.List (intercalate, sortBy)
 import Data.Function (on)
 import qualified Data.HashMap.Strict as M
@@ -13,8 +12,10 @@ instance Show Value where
   show (IntV n)       = show n
   show (StringV s)    = show s
   show (ListV ls _)   = show ls
+isClear :: Value -> Bool
 isClear (IntV n)      = n == 0
 isClear (ListV ls _)  = null ls
+isClear (StringV s)   = null s
 
 -- ======
 -- VarTab
@@ -23,14 +24,16 @@ isClear (ListV ls _)  = null ls
 -- ids
 data Id = Id String [Exp] deriving Eq
 instance Show Id where
-  show (Id id exps) =
-    id ++ showIdx exps
+  show (Id name exps) =
+    name ++ showIdx exps
 
+showIdx :: Show a => [a] -> String
 showIdx exps = if null exps then "" else "[" ++ (intercalate "," . map show) exps ++ "]"
 
 type Pos = (Int,Int)
 
 type VarTab = M.HashMap String Value
+showTab :: Show a => M.HashMap [Char] a -> [Char]
 showTab mtab =
   let tab = sort' (M.toList mtab)
       m   = if null tab then 0 else maximum . map (\(n,_) -> length n) $ tab
@@ -54,14 +57,14 @@ data Step = Update Id UpdOp Exp Pos
           | Free String [Exp] Pos
           deriving Eq
 instance Show Step where
-  show (Update id op e _) = show id ++ show op ++ show e
-  show (Push id1 id2 _)   = "push " ++ show id1 ++ " " ++ show id2
-  show (Pop id1 id2 _)    = "pop "  ++ show id1 ++ " " ++ show id2
-  show (Reverse id _)     = "reverse "  ++ show id
-  show (Init id dim _)    = "init " ++ id ++ " " ++ showIdx dim
-  show (Free id dim _)    = "free " ++ id ++ " " ++ showIdx dim
-  show (Swap id1 id2 _)   = "swap " ++ show id1 ++ " " ++ show id2
-  show (Skip _)           = "skip"
+  show (Update name op e _) = show name ++ show op ++ show e
+  show (Push id1 id2 _)     = "push " ++ show id1 ++ " " ++ show id2
+  show (Pop id1 id2 _)      = "pop "  ++ show id1 ++ " " ++ show id2
+  show (Reverse name _)     = "reverse "  ++ show name
+  show (Init name dim _)    = "init " ++ name ++ " " ++ showIdx dim
+  show (Free name dim _)    = "free " ++ name ++ " " ++ showIdx dim
+  show (Swap id1 id2 _)     = "swap " ++ show id1 ++ " " ++ show id2
+  show (Skip _)             = "skip"
 getStepPos :: Step -> Pos
 getStepPos (Update _ _ _ p) = p
 getStepPos (Push _ _ p)     = p
@@ -90,13 +93,13 @@ data Exp
   deriving Eq
 instance Show Exp where
   show (Lit v _)          = show v
-  show (Var id _)         = id
+  show (Var name _)         = name
   show (Binary op l r _)  = show l ++ show op ++ show r
-  show (Unary  op exp _)  = show op ++ show exp
-  show (Index  l exps _)  = show l ++ showIdx exps
-  show (Parens exp _)     = case exp of
-    Parens exp' _ -> show exp
-    _             -> "("++show exp++")"
+  show (Unary  op expr _)  = show op ++ show expr
+  show (Index  l exprs _)  = show l ++ showIdx exprs
+  show (Parens expr _)     = case expr of
+    Parens _ _ -> show expr
+    _             -> "("++show expr++")"
 getExpPos :: Exp -> Pos
 getExpPos (Lit _ p)        = p
 getExpPos (Var _ p)        = p
@@ -180,7 +183,7 @@ instance Show UnOp where
 type TypeTab = [(String, Type)]
 data Type = IntT | StringT | ListT Type deriving Eq
 showTypeTab :: TypeTab -> String
-showTypeTab = (++"\n") . concatMap (\(id,t) -> show t ++ " " ++ id ++ "\n") . sort'
+showTypeTab = (++"\n") . concatMap (\(name,t) -> show t ++ " " ++ name ++ "\n") . sort'
 
 hasDupDec :: TypeTab -> Maybe String
 hasDupDec = hasDupDec' . map fst
@@ -213,6 +216,7 @@ mapUpdOp XorEq   = Binary Xor
 mapUpdOp MultEq  = Binary Mult
 mapUpdOp DivEq   = Binary Div
 
+mapBinOp :: BinOp -> Int64 -> Int64 -> Int64
 mapBinOp Plus    = (+)
 mapBinOp Minus   = (-)
 mapBinOp Xor     = xor
@@ -226,6 +230,8 @@ mapBinOp Less    = \n -> boolToInt . (n<)
 mapBinOp Leq     = \n -> boolToInt . (n<=)
 mapBinOp Greater = \n -> boolToInt . (n>)
 mapBinOp Geq     = \n -> boolToInt . (n>=)
+mapBinOp And     = \n m -> boolToInt (intToBool n && intToBool m)
+mapBinOp Or      = \n m -> boolToInt (intToBool n || intToBool m)
 
 -- StringBinOp
 mapSBinOp Plus = (++)
@@ -234,6 +240,9 @@ mapUnOp Neg  = negate
 mapUnOp Sign = signum
 mapUnOp Not  = boolToInt . (==0)
 
--- converting bool to val
+-- converting bool to int
 boolToInt :: Bool -> Int64
 boolToInt b = if b then 1 else 0
+
+intToBool :: Int64 -> Bool
+intToBool i = i /= 0

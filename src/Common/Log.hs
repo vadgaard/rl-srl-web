@@ -16,23 +16,8 @@ instance Show Log where
 emptyLog :: Log
 emptyLog = Log emptyVarTab []
 
--- instance JSON Log where
---   stringify (Log vt ms) =
---     "{ \"type\" : \"log\", "
---     ++ "\"state\" : " ++ jsonTab "vartab" vt ++ ", "
---     ++ "\"table\" : [" ++ msgsToJSON ms ++ "]"
---     ++ " }"
--- msgsToJSON :: [Message] -> String
--- msgsToJSON ms = intercalate ", " $ map jsonMsg ms
---   where jsonMsg (MsgStep step vtab) =
---           let (l,c) = getStepPos step in
---              "{ \"type\" : \"step\", "
---           ++ "\"position\" : { \"line\" : "++ show l ++ ", \"column\" : " ++ show c ++ " }, "
---           ++ "\"step\" : \"" ++ (escStr . show) step ++ "\", "
---           ++ "\"state\" : " ++ jsonTab "vartab" vtab ++ " }"
---         jsonMsg (MsgError e) = stringify e
-
 data Message = MsgStep   Step VarTab
+             | MsgInfo   String
              | MsgError  Error
 instance Show Message where
   show (MsgStep s vtab)  =
@@ -40,4 +25,5 @@ instance Show Message where
     case s of
       Skip{}  -> show s
       _       -> show s ++ "\n" ++ showTab vtab
+  show (MsgInfo msg) = msg
   show (MsgError err) = "*** Error: " ++ show err

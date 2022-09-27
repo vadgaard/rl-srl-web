@@ -9,6 +9,7 @@ import Common.AST
 import Control.Monad.State
 import Control.Monad.Writer
 import Control.Monad.Except
+    ( ExceptT, MonadError(throwError), runExceptT )
 import Control.Monad.Loops (allM, anyM)
 
 import qualified Data.HashMap.Strict as M
@@ -22,27 +23,27 @@ execVarState :: VarTab -> VarState () -> (Either Error VarTab, [Message])
 execVarState vtab = runWriter . runExceptT . flip execStateT vtab
 
 rd :: Id -> Pos -> VarState Value
-rd (Id id exps) p = gets (M.lookup id) >>= \case
+rd (Id name exps) p = gets (M.lookup name) >>= \case
   Just v  -> foldM getIdx v exps
-  Nothing -> logError p $ NonDefinedId id
+  Nothing -> logError p $ NonDefinedId name
 
 getIdx :: Value -> Exp -> VarState Value
-getIdx (IntV n)      idx = logError (getExpPos idx) IndexOnNonListExp
+getIdx (IntV _)      idx = logError (getExpPos idx) IndexOnNonListExp
 getIdx (StringV s)   idx = eval idx >>= \case
   IntV i | i < 0                -> logError (getExpPos idx) NegativeIndex
          | n <- (fromIntegral . length) s :: Int64,
             i >= n              -> logError (getExpPos idx) IndexOutOfBounds
          | otherwise, 
-            i <- fromIntegral i -> return $ StringV $ [s !! i]
-  w -> logError (getExpPos idx) NonInt64Index
+            i' <- fromIntegral i -> return $ StringV $ [s !! i']
+  _ -> logError (getExpPos idx) NonInt64Index
 getIdx (ListV lst _) idx = eval idx >>= \case
   IntV i | i < 0     -> logError (getExpPos idx) NegativeIndex
     | otherwise -> case index lst i of
       Just v  -> return v
       Nothing -> logError (getExpPos idx) IndexOutOfBounds
-  w -> logError (getExpPos idx) NonInt64Index
+  _ -> logError (getExpPos idx) NonInt64Index
   where index :: [Value] -> Int64 -> Maybe Value
-        index lst i = if fromIntegral i >= length lst then Nothing else Just $ lst !! fromIntegral i
+        index lst' i = if fromIntegral i >= length lst' then Nothing else Just $ lst' !! fromIntegral i
 
 logStep :: Step -> VarState ()
 logStep s = do
@@ -50,17 +51,20 @@ logStep s = do
     msg <- gets (MsgStep s)
     tell [msg]
 
+logInfo :: String -> VarState ()
+logInfo msg = tell [MsgInfo msg]
+
 logError :: Pos -> RuntimeError -> VarState a
 logError p err' | err <- RuntimeError p err' = do
   tell [MsgError err]
   throwError err
 
 adjust :: (Value -> Value) -> Id -> Pos -> VarState ()
-adjust op (Id id []) _ = modify $ M.adjust op id
-adjust op (Id id exps) p = do
-  v <- rd (Id id []) p
+adjust op (Id name []) _ = modify $ M.adjust op name
+adjust op (Id name exps) p = do
+  v <- rd (Id name []) p
   mn <- adjust' op exps v
-  modify $ M.insert id mn
+  modify $ M.insert name mn
 
 adjust' :: (Value -> Value) -> [Exp] -> Value -> VarState Value
 adjust' op [] vo = return $ op vo
@@ -70,10 +74,10 @@ adjust' op (e:es) vo = do
   case vo of
     ListV lst t -> eval e >>= \case
       IntV i -> return $ ListV (replace lst i vi) t
-      w     -> logError (getExpPos e) NonInt64Index
+      _     -> logError (getExpPos e) NonInt64Index
     _ -> logError (getExpPos e) IndexOnNonListExp
 
-  where replace :: [Value]  -> Int64 -> Value -> [Value]
+  where replace :: [Value] -> Int64 -> Value -> [Value]
         replace (_:vs) 0 nv = nv:vs
         replace (v:vs) i nv = v : replace vs (i-1) nv
 
@@ -83,16 +87,16 @@ adjust' op (e:es) vo = do
 exec :: Step -> VarState ()
 
 -- variable updates
-exec (Update (Id id is) op e p) = do
-  when (is `contain` id) $ logError p $ ListInOwnIndex (Id id is)
-  cont <- contains2 e (Id id is) []
-  when cont $ logError p $ SelfAbuse (Id id is)
+exec (Update (Id name is) op e p) = do
+  when (is `contain` name) $ logError p $ ListInOwnIndex (Id name is)
+  cont <- contains2 e (Id name is) []
+  when cont $ logError p $ SelfAbuse (Id name is)
 
-  v1 <- rd (Id id is) p
+  v1 <- rd (Id name is) p
   n <- case v1 of
     IntV n    -> return n
     StringV s -> return 0
-    w         -> logError p $ UpdateOnNonInt64 (Id id is) (getType w)
+    w         -> logError p $ UpdateOnNonInt64 (Id name is) (getType w)
 
   v2 <- eval e
   m <- case v2 of
@@ -109,7 +113,7 @@ exec (Update (Id id is) op e p) = do
     _ -> return ()
   
   res <- eval $ mapUpdOp op (Lit v1 p) (Lit v2 p) p
-  adjust (const res) (Id id is) p
+  adjust (const res) (Id name is) p
 
   where
         -- =========================================================
@@ -122,13 +126,13 @@ exec (Update (Id id is) op e p) = do
               (==) <$> mapM eval exps1 <*> mapM eval exps2
             else return False
           | otherwise = return False
-        contains2 (Binary _ e1 e2 _) id is = (||) <$> contains2 e1 id is <*> contains2 e2 id is
-        contains2 (Unary Top e p) id is    = contains2 e id (Lit (IntV 0) p : is)
+        contains2 (Binary _ e1 e2 _) name is = (||) <$> contains2 e1 name is <*> contains2 e2 name is
+        contains2 (Unary Top e p) name is    = contains2 e name (Lit (IntV 0) p : is)
         contains2 (Unary Size _ _) _ _     = return False
-        contains2 (Unary _ e _) id is      = contains2 e id is
-        contains2 (Index l exps _) id is   =
-          (||) <$> anyM (\e -> contains2 e id []) exps <*> contains2 l id (exps ++ is)
-        contains2 (Parens e _) id is       = contains2 e id is
+        contains2 (Unary _ e _) name is      = contains2 e name is
+        contains2 (Index l exps _) name is   =
+          (||) <$> anyM (\e -> contains2 e name []) exps <*> contains2 l name (exps ++ is)
+        contains2 (Parens e _) name is       = contains2 e name is
 
 -- list modification
 exec (Push id1 id2 p) = do
@@ -184,30 +188,30 @@ exec (Swap id1 id2 p) = do
   adjust (const v2) id1 p >> adjust (const v1) id2 p
 
 -- reverse
-exec (Reverse id p) = do
-  rd id p >>= \case
-    IntV _    -> logError p $ NonReversable id
-    StringV s -> adjust (const $ StringV (reverse s)) id p
-    ListV v t -> adjust (const $ ListV (reverse v) t) id p
+exec (Reverse name p) = do
+  rd name p >>= \case
+    IntV _    -> logError p $ NonReversable name
+    StringV s -> adjust (const $ StringV (reverse s)) name p
+    ListV v t -> adjust (const $ ListV (reverse v) t) name p
   
 
 -- initialising a list
-exec (Init id exps p) = do
-  when (exps `contain` id) $ logError p $ DimSelfAbuse id
+exec (Init name exps p) = do
+  when (exps `contain` name) $ logError p $ DimSelfAbuse name
 
-  v <- rd (Id id []) p
+  v <- rd (Id name []) p
 
   case v of
-    IntV _ -> logError p $ InitOnNonList id
+    IntV _ -> logError p $ InitOnNonList name
     ListV ls t
       | getDim t /= length exps ->
         logError p ConflictingDimensions
     _ -> return ()
 
-  unless (isClear v) $ logError p $ InitNonEmptyList id
+  unless (isClear v) $ logError p $ InitNonEmptyList name
 
   nv <- foldr ((=<<) . repl) (pure $ IntV 0) exps
-  adjust (const nv) (Id id []) p
+  adjust (const nv) (Id name []) p
 
   where
 
@@ -222,24 +226,24 @@ exec (Init id exps p) = do
       ListV _ t  -> logError (getExpPos e) $ NonInt64Dimension t
 
 -- freeing a list
-exec (Free id exps p) = do
-  when (exps `contain` id) $ logError p $ DimSelfAbuse id
+exec (Free name exps p) = do
+  when (exps `contain` name) $ logError p $ DimSelfAbuse name
 
-  v <- rd (Id id []) p
+  v <- rd (Id name []) p
 
   case v of
-    IntV _ -> logError p $ FreeOnNonList id
+    IntV _ -> logError p $ FreeOnNonList name
     ListV ls t
       | getDim t /= length exps ->
         logError p ConflictingDimensions
     _ -> return ()
 
-  unless (allZero v) $ logError p $ FreeNonEmptyList id
+  unless (allZero v) $ logError p $ FreeNonEmptyList name
 
   eql <- equalLengths v exps
   unless eql $ logError p ConflictingLengths
 
-  adjust (const . getDefaultValue . getType $ v) (Id id []) p
+  adjust (const . getDefaultValue . getType $ v) (Id name []) p
 
   where
 
@@ -247,7 +251,7 @@ exec (Free id exps p) = do
       IntV n
         | n >= 0 -> case v of
           ListV ls t  -> (&&) (length ls == fromIntegral n) <$> allM (`equalLengths` exps) ls
-          IntV _      -> logError p $ FreeOnNonList id
+          IntV _      -> logError p $ FreeOnNonList name
         | otherwise -> logError (getExpPos e) NegativeDimension
       ListV _ t -> logError (getExpPos e) $ NonInt64Dimension t
     equalLengths ListV{} [] = return False
@@ -269,7 +273,7 @@ eval :: Exp -> VarState Value
 
 -- terminals
 eval (Lit v _)  = return v
-eval (Var id p) = rd (Id id []) p
+eval (Var name p) = rd (Id name []) p
 
 eval (Binary op l r p)
 
@@ -366,19 +370,19 @@ checkCond e = eval e >>= \case
 
 -- helper for some functionality
 contain :: [Exp] -> String -> Bool
-contain exps id = any (`contains` id) exps
+contain exps name = any (`contains` name) exps
 
 contains :: Exp -> String ->  Bool
 contains Lit{} _               = False
-contains (Var id' _) id        = id' == id
-contains (Binary _ e1 e2 _) id = e1 `contains` id || e2 `contains` id
-contains (Unary _ e _) id      = e  `contains` id
-contains (Index e exps _) id   = e  `contains` id || exps `contain` id
-contains (Parens e _) id       = e  `contains` id
+contains (Var name' _) name        = name' == name
+contains (Binary _ e1 e2 _) name = e1 `contains` name || e2 `contains` name
+contains (Unary _ e _) name      = e  `contains` name
+contains (Index e exps _) name   = e  `contains` name || exps `contain` name
+contains (Parens e _) name       = e  `contains` name
 
 containsId :: Id -> Id -> Bool
-containsId (Id id is) (Id id' _) =
-  id' == id || is `contain` id'
+containsId (Id name is) (Id name' _) =
+  name' == name || is `contain` name'
 
 containsItself :: Id -> Bool
-containsItself (Id id is) = is `contain` id
+containsItself (Id name is) = is `contain` name

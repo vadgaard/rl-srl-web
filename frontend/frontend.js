@@ -62,10 +62,10 @@
     }
     function toggleLang() {
         lang = getOtherLang();
-        optionalLocalStorageSetItem("lang", lang);
         updateLang();
     }
     function updateLang() {
+        optionalLocalStorageSetItem("lang", lang);
         langButtonText.html(lang.toUpperCase());
         outputMode = null;
     }
@@ -75,7 +75,6 @@
         transferButton.hide();
         outputMode = null;
         runProgram('run');
-        updateMode();
     }
 
     function onInvertClickHandler() {
@@ -83,7 +82,6 @@
         outputMode = lang;
         transferButton.show();
         runProgram('invert');
-        updateMode();
     }
 
     function onTranslateClickHandler() {
@@ -91,7 +89,6 @@
         transferButton.show();
         outputMode = lang;
         runProgram('translate');
-        updateMode();
     }
     
     function onTransferClickHandler() {
@@ -158,32 +155,37 @@
         });
     }
 
-    var runRequst = null;
+    var runRequest = null;
     function runProgram(mode)
     {
         resetMarkers();
-        if (runRequst !== null)
+        if (runRequest !== null)
             return;
         disableEditor(aceEditor);
         aceOutput.getSession().setValue('');
-        runRequst = $.ajax(
+        runRequest = $.ajax(
             { url: "/api",
               method: "POST",
               data: {
                   lang: lang,
                   mode: mode,
                   script: aceEditor.getValue(),
+                  log: logCheckBox.prop('checked').toString()
               },
               timeout: 8000
             })
-            .success( handleCheckResponse )
+            .success( function(response) {
+                handleRunResponse(response);
+            })
             .fail(function(hxr, textStatus, errorThrown) {
+                outputMode = null;
                 errorwindow.html("Request failed with error: " + textStatus);
-                errorwindow.scrollTop(errorwindow.prop("scrollHeight"));
             })
             .always(function() { 
                 enableEditor(aceEditor)
-                runRequst = null;
+                updateMode();
+                runRequest = null;
+                errorwindow.scrollTop(0);
             });
     }
 
@@ -209,21 +211,23 @@
         errorMarkers = [];
     }
     
-    function handleCheckResponse(response) {
-        // outputwindow.html('');
-        // aceOutput.getSession().setValue('');
+    function handleRunResponse(response) {
         errorwindow.html('');
         if (response.error) {
+            outputMode = null;
+            // aceOutput.getSession().setValue(response.error);
             errorwindow.html('<pre><samp>' + response.error + '</samp></pre>');
-            errorwindow.scrollTop(errorwindow.prop("scrollHeight"));
             highlightErrors(response.loc_l, response.loc_c);
-            if (logCheckBox.prop('checked'))
-                playSound('trombone.wav');
-            return;
         } else
         {
-            // outputwindow.html('<pre><samp>' + response.output + '</samp></pre>');
             aceOutput.getSession().setValue(response.output);
+        }
+        
+        if (response.log) {
+            errorwindow.append('<pre><samp>Execution trace:</pre></samp>' )
+            $.each(response.log, function(i,message) {
+                errorwindow.append('<pre><samp>' + message + '</pre></samp>' )
+            })
         }
     }
     

@@ -36,6 +36,7 @@ interp from l = do
   result <- asks (M.lookup l)
   case result of
     Just (f,ss,j) -> do
+      llogInfo $ "From: " ++ show f
       case f of
         Entry p      -> unless (null from)
           $ logFromErr p (show $ Entry p) from
@@ -43,22 +44,27 @@ interp from l = do
           $ logFromErr p from l'
         Fi a l1 l2 p -> do
           q <- lcheckCond a
+          llogInfo $ "Condition evaluated to " ++ show q
           let l' = if q then l1 else l2
-          unless (from == l')
-            $ logFromErr p from l'
+          if (from == l')
+          then llogInfo "Labels match!"
+          else logFromErr p from l'
 
       logSteps ss
 
+      llogInfo $ "Jump: " ++ show j
       case j of
         Exit _       -> return ()
         Goto l' _    -> interp l l'
         If t l1 l2 p -> do
           q <- lcheckCond t
+          llogInfo $ "Condition evaluated to " ++ show q
           if q then interp l l1 else interp l l2
-    Nothing -> error "oh no"
+    Nothing -> error "Label not defined. Should not happen after static check."
 
   where logSteps   = lift . mapM_ logStep
         lcheckCond = lift . checkCond
+        llogInfo   = lift . logInfo
 
 -- helper
 logFromErr p from to = lift $ logError p (FromFail from to)
