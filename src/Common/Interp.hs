@@ -311,7 +311,7 @@ eval (Unary op exp p)
   -- unary list
   | op == Null = IntV . boolToInt . allZero <$> eval exp
   | otherwise = eval exp >>= \case
-    ListV ls t -> case op of
+    ListV ls _ -> case op of
       Top   -> case ls of
         []    -> logError p EmptyTop
         v:ls  -> return v

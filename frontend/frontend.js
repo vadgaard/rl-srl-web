@@ -223,7 +223,7 @@
             aceOutput.getSession().setValue(response.output);
         }
         
-        if (response.log) {
+        if (response.log !== null) {
             errorwindow.append('<pre><samp>Execution trace:</pre></samp>' )
             $.each(response.log, function(i,message) {
                 errorwindow.append('<pre><samp>' + message + '</pre></samp>' )

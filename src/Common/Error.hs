@@ -66,7 +66,7 @@ data StaticError
   | NoExit
 
 instance Show Error where
-  show (ParseError _ e)   = e
+  show (ParseError _ e)       = "A parse error occurred at " ++ e
   show (RuntimeError (l,c) e) = "A runtime error occurred at (line "++show l++", column "++show c++"):\n" ++ show e
   show (StaticError (l,c) e)  = "An error occurred at (line "++show l++", column "++show c++"): " ++ show e
   show (Custom e)             = e

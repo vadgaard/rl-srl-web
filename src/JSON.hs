@@ -39,7 +39,7 @@ instance ToKeyValue VarTabContainer where
     toKeyValue (VarTabContainer vtab) = ["output" .= showTab vtab]
 
 instance ToKeyValue Log where
-    toKeyValue (Log vtab msgs) = ["log" .= if length msgs > 5000 then Null else (toJSON . map show) msgs]
+    toKeyValue (Log vtab msgs) = ["log" .= if null msgs || length msgs > 5000 then Null else (toJSON . map show) msgs]
 
 newtype RunResult = RunResult (VarTab, Log)
 instance ToKeyValue RunResult where
