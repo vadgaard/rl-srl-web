@@ -5,6 +5,7 @@
     --accent1: #172c3f; /* navbar background */
     --accent2: #dee4ee; /* navbar text */
     --accent3: #2ca7c5; /* navbar border */
+    --accent3_hover: #288ba3; /* navbar border */
     --accent4: var(--accent2); /* button background */
     --accent5: var(--accent1); /* button text */
     --accent6: var(--accent3); /* button hover */
@@ -74,6 +75,15 @@ body {
 }
 #control button:hover {
     background-color: var(--accent6);
+}
+a.homepage, a:visited.homepage, a:active.homepage, a:hover.homepage {
+    text-decoration: none;
+}
+a.homepage, a:active.homepage, a:visited.homepage {
+    color: var(--accent3);
+}
+a:hover.homepage {
+    color: var(--accent3_hover);
 }
 #logo, #credits, #logdiv {
     height: 45px;
