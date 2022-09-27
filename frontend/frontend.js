@@ -11,15 +11,11 @@
     var outputwindow;
     var errorMarkers = [];
     var lang;
+    var resultLang;
     var outputMode;
 
     var hpos; // Position of horizontal splitter
     var vpos; // Position of vertical splitter
-
-    function playSound(sound) {
-        var audio = new Audio(sound);
-        audio.play();
-    }
     
     function updateLayout() {
         var w = main.width();
@@ -51,15 +47,6 @@
     }
 
     function onVSplitterMouseDownHandler() {
-        function hideVWindows() {
-            left.hide();
-            outputwindow.hide();
-        }
-        function showVWindows() {
-            left.show();
-            outputwindow.show();
-        }        
-        hideVWindows();
         $(window).mousemove(function(event) {
             vpos = event.pageX - main.position().left;
             updateLayout();
@@ -67,13 +54,14 @@
         $(window).mouseup(function() {
             $(window).unbind('mouseup');
             $(window).unbind('mousemove');
-            showVWindows();
         });
     }
     
     function onLangClickHandler() {
-        if (lang == "srl") lang = "rl";
-        else lang = "srl"
+        toggleLang();
+    }
+    function toggleLang() {
+        lang = getOtherLang();
         optionalLocalStorageSetItem("lang", lang);
         updateLang();
     }
@@ -83,75 +71,83 @@
     }
     
     function onRunClickHandler() {
+        resultLang = null;
+        transferButton.hide();
         outputMode = null;
         runProgram('run');
         updateMode();
     }
 
     function onInvertClickHandler() {
+        resultLang = lang;
         outputMode = lang;
+        transferButton.show();
         runProgram('invert');
         updateMode();
     }
 
     function onTranslateClickHandler() {
-        outputMode = lang
+        resultLang = getOtherLang(); 
+        transferButton.show();
+        outputMode = lang;
         runProgram('translate');
         updateMode();
     }
-
-    function onReportClickHandler() {
-        var m1 = "ZG9sbGVAZ";
-        var m2 = "GlrdS5kaw==";
-        var a = document.createElement('a');
-        var mailto = 'mailto:' + window.atob(m1 + m2);
-        mailto += '?subject=Bug%20report';
-        mailto += '&body=';
-        mailto +=
-          encodeURIComponent("\n\n== Proof script causing unexpected behavior: ==\n\n");
-        mailto += encodeURIComponent(aceEditor.getValue());
-        a.setAttribute('href', mailto);
-        a.style.cssText = "visibility:hidden;";
-        document.body.appendChild(a);
-        a.click();
-        setTimeout( function() { document.body.removeChild(a) }, 1 );
-    }
-
-    function onEnhanceClickHandler() {
-        optionalLocalStorageSetItem("enhance", enhanceCheckBox.prop('checked'));
-    }
     
-    function onRlClickHandler() {
-        optionalLocalStorageSetItem("lang", 'rl');
+    function onTransferClickHandler() {
+        if (resultLang !== null) {
+            aceEditor.getSession().setValue(aceOutput.getSession().getValue())
+            lang = resultLang;
+            updateLang();
+            resultLang = null;
+        }
+        transferButton.hide();
     }
-    function onSrlClickHandler() {
-        optionalLocalStorageSetItem("lang", 'srl');
+    function getOtherLang() {
+        return(lang == 'srl' ? 'rl' : 'srl');
+    }
+
+    function onLogClickHandler() {
+        optionalLocalStorageSetItem("log", logCheckBox.prop('checked'));
     }
 
     function onThemeSelectChange(e) {
         setTheme($('option:selected', e.target).val());
     }
 
+    var themeTimer;
     function setTheme(theme) {
         var theme = theme || optionalLocalStorageGetItem('theme') || 'ace/theme/chrome';
         aceEditor.setTheme(theme);
         aceOutput.setTheme(theme)
         // TODO: change general CSS to match theme
-        svgData.css('fill', logo.css('color'))
+        clearTimeout(themeTimer);
+        themeTimer = setTimeout(updateColors, 100);
         optionalLocalStorageSetItem('theme', theme);
+    }
+    function updateColors() {
+        // var style = aceEditor.renderer.scroller.style;
+        // var bgColor = style.backgroundColor;
+        // var textColor = style.color;
+        // var hoverColor = style.gutter;
+        // console.log(hoverColor)
+        // navbar.css('background-color', bgColor)
+        // // navbar.css('border-bottom', '4px solid ' + borderColor)
+        // logo.css('color', textColor)
+        // var buttons = $('#control button')
+        // buttons.each(function(index) {
+        //     $(this).css('background-color', textColor)
+        //     $(this).css('color', bgColor)
+        // });
+        // buttons.hover(function() {
+        //     $(this).css('background-color', hoverColor)
+        // },function() {
+        //     $(this).css('background-color', textColor)
+        // });
+        svgData.css('fill', logo.css('color'))
     }
     
     function onHSplitterMouseDownHandler() {
-        function hideHWindows() {
-            errorwindow.hide();
-            outputwindow.hide();
-        }        
-        function showHWindows() {
-            errorwindow.show();
-            outputwindow.show();
-        }
-
-        hideHWindows();
         $(window).mousemove(function(event) {
             hpos = event.pageY - main.position().top;
             updateLayout();
@@ -159,20 +155,19 @@
         $(window).mouseup(function() {
             $(window).unbind('mouseup');
             $(window).unbind('mousemove');
-            showHWindows();
         });
     }
 
-    var checkRequest = null;
+    var runRequst = null;
     function runProgram(mode)
     {
         resetMarkers();
-        if (checkRequest !== null)
+        if (runRequst !== null)
             return;
         disableEditor(aceEditor);
         aceOutput.getSession().setValue('');
-        checkRequest = $.ajax(
-            { url: SERVER_URL + "/api",
+        runRequst = $.ajax(
+            { url: "/api",
               method: "POST",
               data: {
                   lang: lang,
@@ -188,7 +183,7 @@
             })
             .always(function() { 
                 enableEditor(aceEditor)
-                checkRequest = null;
+                runRequst = null;
             });
     }
 
@@ -222,7 +217,7 @@
             errorwindow.html('<pre><samp>' + response.error + '</samp></pre>');
             errorwindow.scrollTop(errorwindow.prop("scrollHeight"));
             highlightErrors(response.loc_l, response.loc_c);
-            if (enhanceCheckBox.prop('checked'))
+            if (logCheckBox.prop('checked'))
                 playSound('trombone.wav');
             return;
         } else
@@ -249,11 +244,7 @@
     }
     
     function updateMode() {
-        aceEditor.getSession().setMode("ace/mode/" + lang);
-        if (outputMode !== null)
-            aceOutput.getSession().setMode("ace/mode/" + outputMode);
-        else
-            aceOutput.getSession().setMode(null);
+        aceOutput.getSession().setMode(outputMode ? "ace/mode/rlsrl" : null);
     }
 
     function getQueryParameters() {
@@ -303,13 +294,13 @@
         runButton       = $("#run");
         invertButton    = $("#invert");
         translateButton = $("#translate");
+        transferButton  = $("#transfer"); transferButton.hide();
         saveButton      = $("#save");
         shareButton     = $("#share");
         openButton      = $("#open");
         reportButton    = $("#report");
         helpButton      = $("#help");
-        printButton     = $("#print");
-        enhanceCheckBox = $("#enhance");
+        logCheckBox     = $("#log");
         themeSelect     = $("#theme");
         navbar          = $("#control");
         logo            = $("#logo");
@@ -318,24 +309,55 @@
         aceEditor = ace.edit("editor");
         aceOutput = ace.edit("outputwindow")
         setTheme();
+
+        // bindings
         aceEditor.commands.addCommand({
-            name: 'CheckCommand',
+            name: 'RunCommand',
             bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
             exec: function(editor) {
-                runProgram();
+                onRunClickHandler();
             },
             readOnly: true
         });
+        aceEditor.commands.addCommand({
+            name: 'InvertCommand',
+            bindKey: {win: 'Shift-Enter',  mac: 'Shift-Enter'},
+            exec: function(editor) {
+                onInvertClickHandler();
+            },
+            readOnly: true
+        });
+        aceEditor.commands.addCommand({
+            name: 'TranslateCommand',
+            bindKey: {win: 'Ctrl-Shift-Enter',  mac: 'Command-Shift-Enter'},
+            exec: function(editor) {
+                onTranslateClickHandler();
+            },
+            readOnly: true
+        });
+        aceEditor.commands.addCommand({
+            name: 'LangCommand',
+            bindKey: {win: 'Ctrl-Space',  mac: 'Command-Space'},
+            exec: function(editor) {
+                onLangClickHandler();
+            },
+            readOnly: true
+        });
+        
+        // configure output window
         disableEditor(aceOutput)
         aceOutput.renderer.setShowGutter(false);
         aceOutput.getSession().setValue('');
 
+        // set themelist
         var themeList = ace.require("ace/ext/themelist");
         populateThemeSelect(themeList, themeSelect);
 
+        // set layout
         setInitialLayout();
         updateLayout();
 
+        // define elements
         $(window).resize(onWindowResizeHandler);
         vsplitter.mousedown(onVSplitterMouseDownHandler);
         hsplitter.mousedown(onHSplitterMouseDownHandler);
@@ -343,11 +365,12 @@
         runButton.click(onRunClickHandler);
         invertButton.click(onInvertClickHandler);
         translateButton.click(onTranslateClickHandler);
-        reportButton.click(onReportClickHandler);
+        transferButton.click(onTransferClickHandler);
         helpButton.click(function() { window.open("help.html");  });
-        enhanceCheckBox.click(onEnhanceClickHandler);
+        logCheckBox.click(onLogClickHandler);
         themeSelect.change(onThemeSelectChange);
 
+        // set lang value
         query = getQueryParameters();
         if ("lang" in query && (query.lang == 'rl' || query.lang == 'srl'))
         {
@@ -361,6 +384,7 @@
                 lang = 'srl'
             }
         }
+        // set code in editor
         if ("script" in query)
         {
             aceEditor.getSession().setValue(query.script);
@@ -415,13 +439,16 @@ exit`
             }
         }
         
+        // what highlighting to use in output window
+        aceEditor.getSession().setMode("ace/mode/rlsrl");
         outputMode = null;
         updateMode();
         updateLang();
 
-        var enhance = optionalLocalStorageGetItem("enhance");
-        if (enhance == "true")
-            enhanceCheckBox.prop('checked', true);
+        // set whether to log or not
+        var log = optionalLocalStorageGetItem("log");
+        if (log == "true")
+            logCheckBox.prop('checked', true);
         
         aceEditor.getSession().on("change", function() {
             var script = aceEditor.getSession().getValue();

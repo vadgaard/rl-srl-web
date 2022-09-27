@@ -1,7 +1,10 @@
 :root {
-    --accent1: #b5f7f1; /* navbar background */
-    --accent2: #085b6e; /* navbar text */
-    --accent3: #097291; /* navbar border */
+    /* --accent1: #b5f7f1;
+    --accent2: #085b6e;
+    --accent3: #097291; */
+    --accent1: #172c3f; /* navbar background */
+    --accent2: #dee4ee; /* navbar text */
+    --accent3: #2ca7c5; /* navbar border */
     --accent4: var(--accent2); /* button background */
     --accent5: var(--accent1); /* button text */
     --accent6: var(--accent3); /* button hover */
@@ -57,7 +60,7 @@ body {
 #control {
     margin:0px;
     background-color: var(--accent1);
-    border-bottom: 4px solid var(--accent3)
+    border-bottom: 4px solid var(--accent1)
 }
 #control button {
     border: none;
@@ -126,9 +129,4 @@ body {
 
 #outputwindow {
     overflow: auto;
-}
-
-.twelfMultiLineErrorMarker {
-    border-bottom: 1px dotted red;
-    position: absolute;
 }
