@@ -76,7 +76,7 @@
     
     function onRunClickHandler() {
         resultLang = null;
-        transferButton.hide();
+        showsTransferButton = false;
         outputMode = null;
         runProgram('run');
     }
@@ -84,13 +84,13 @@
     function onInvertClickHandler() {
         resultLang = lang;
         outputMode = lang;
-        transferButton.show();
+        showsTransferButton = true;
         runProgram('invert');
     }
 
     function onTranslateClickHandler() {
         resultLang = getOtherLang(); 
-        transferButton.show();
+        showsTransferButton = true;
         outputMode = lang;
         runProgram('translate');
     }
@@ -102,7 +102,8 @@
             updateLang();
             resultLang = null;
         }
-        transferButton.hide();
+        showsTransferButton = false;
+        updateTransferButton();
     }
     function getOtherLang() {
         return(lang == 'srl' ? 'rl' : 'srl');
@@ -187,11 +188,21 @@
                 errorwindow.html("Request failed with error: " + textStatus);
             })
             .always(function() { 
+                updateTransferButton();
                 enableEditor(aceEditor)
                 updateMode();
                 runRequest = null;
                 errorwindow.scrollTop(0);
             });
+    }
+    
+    function updateTransferButton() {
+        if (showsTransferButton) {
+            transferButton.show();
+        }
+        else {
+            transferButton.hide();
+        }
     }
 
     function highlightErrors(row, col) {
@@ -219,6 +230,8 @@
     function handleRunResponse(response) {
         errorwindow.html('');
         if (response.error) {
+            showsTransferButton = false;
+            transferButton.hide();
             outputMode = null;
             // aceOutput.getSession().setValue(response.error);
             errorwindow.html('<pre><samp>' + response.error + '</samp></pre>');
