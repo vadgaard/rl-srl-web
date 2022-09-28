@@ -21,23 +21,26 @@
         var w = main.width();
         var h = main.height();
         var splitSize = 6;
-        left.width(vpos - splitSize);
-        outputwindow.css({ left: vpos,
-                         width: w - vpos });
-        vsplitter.css({ left: vpos - splitSize,
+        var outputLeft = w * vpos;
+        var outputWidth = w - outputLeft;
+        var editorHeight = h * hpos
+        left.width(outputLeft - splitSize);
+        outputwindow.css({ left: outputLeft,
+                         width: outputWidth});
+        vsplitter.css({ left: outputLeft - splitSize,
                         width: splitSize });
-        editor.css({ height: hpos - splitSize });
-        errorwindow.css({ height: h - hpos,
-                     top: hpos });
-        hsplitter.css({ top: hpos - splitSize,
+        editor.css({ height: editorHeight - splitSize });
+        errorwindow.css({ height: h - editorHeight,
+                     top: editorHeight });
+        hsplitter.css({ top: editorHeight - splitSize,
                         height: splitSize });
         aceEditor.resize()
         aceOutput.resize()
     }
 
     function setInitialLayout() {
-        vpos = main.width() / 2;
-        hpos = main.height() - main.height() / 5;
+        vpos = .5; // main.width() / 2;
+        hpos = .8; //main.height() - main.height() / 5;
     }
 
     var resizeTimer;
@@ -47,8 +50,9 @@
     }
 
     function onVSplitterMouseDownHandler() {
+        var w = main.width();
         $(window).mousemove(function(event) {
-            vpos = event.pageX - main.position().left;
+            vpos = (event.pageX - main.position().left) / w
             updateLayout();
         });
         $(window).mouseup(function() {
@@ -145,8 +149,9 @@
     }
     
     function onHSplitterMouseDownHandler() {
+        var h = main.height();
         $(window).mousemove(function(event) {
-            hpos = event.pageY - main.position().top;
+            hpos = (event.pageY - main.position().top) / h;
             updateLayout();
         });
         $(window).mouseup(function() {
