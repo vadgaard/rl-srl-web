@@ -7,7 +7,7 @@ import Data.Aeson.Types
 
 import Common.Error ( Error(..) )
 import Common.AST ( VarTab, showTab)
-import Common.Log ( Log(..) )
+import Common.Log ( Log(..), Message(MsgInfo) )
 import RL.AST ( RLProgram )
 import SRL.AST ( SRLProgram )
 
@@ -19,13 +19,13 @@ class ToKeyValue a where
 
 instance ToKeyValue Error where
     toKeyValue err = case err of
-        ParseError (l,c) e ->
+        ParseError (l,c) _ ->
             ["error" .= show err, "loc_l" .= show l, "loc_c" .= show c]
-        RuntimeError (l,c) e ->
+        RuntimeError (l,c) _ ->
             ["error" .= show err, "loc_l" .= show l, "loc_c" .= show c]
-        StaticError (l,c) e ->
+        StaticError (l,c) _ ->
             ["error" .= show err, "loc_l" .= show l, "loc_c" .= show c]
-        Custom e ->
+        Custom _ ->
             ["error" .= show err]
 
 instance ToKeyValue RLProgram where
@@ -39,15 +39,15 @@ instance ToKeyValue VarTabContainer where
     toKeyValue (VarTabContainer vtab) = ["output" .= showTab vtab]
 
 instance ToKeyValue Log where
-    toKeyValue (Log vtab msgs) = ["log" .= if null msgs || length msgs > 5000 then Null else (toJSON . map show) msgs]
+    toKeyValue (Log _ msgs) = ["log" .= if null msgs then Null else if length msgs > 1000 then toJSON [show $ MsgInfo "Trace too large; more than 1000 entries."] else (toJSON . map show) msgs]
 
 newtype RunResult = RunResult (VarTab, Log)
 instance ToKeyValue RunResult where
-    toKeyValue (RunResult (vtab, log)) = toKeyValue log ++ toKeyValue (VarTabContainer vtab)
+    toKeyValue (RunResult (vtab, trace)) = toKeyValue trace ++ toKeyValue (VarTabContainer vtab)
 
 newtype ErrorResult = ErrorResult (Error, Log)
 instance ToKeyValue ErrorResult where
-    toKeyValue (ErrorResult (err, log)) = toKeyValue log ++ toKeyValue err
+    toKeyValue (ErrorResult (err, trace)) = toKeyValue trace ++ toKeyValue err
 
 instance ToJSON RLProgram where
     toJSON program = object $ toKeyValue program ++ ["log" .= Null, "error" .= Null]

@@ -13,9 +13,10 @@
     var lang;
     var resultLang;
     var outputMode;
-
-    var hpos; // Position of horizontal splitter
-    var vpos; // Position of vertical splitter
+    // position of horizontal splitter as a fraction of whole page
+    var hpos;
+    // position of vertical splitter as a fraction of whole page
+    var vpos;
     
     function updateLayout() {
         var w = main.width();
@@ -39,8 +40,14 @@
     }
 
     function setInitialLayout() {
-        vpos = .5; // main.width() / 2;
-        hpos = .8; //main.height() - main.height() / 5;
+        vpos = optionalLocalStorageGetItem("vpos");
+        if (vpos == null) {
+            vpos = .5;
+        }
+        hpos = optionalLocalStorageGetItem("hpos");
+        if (hpos == null) {
+            hpos = .8;
+        }
     }
 
     var resizeTimer;
@@ -49,7 +56,7 @@
         resizeTimer = setTimeout(updateLayout, 100);
     }
 
-    var minFrac = .01; var maxFrac = 1 - minFrac;
+    const minFrac = .01; const maxFrac = 1 - minFrac;
     function normalizeFrac(frac) {
         if (frac < minFrac) return minFrac;
         if (frac > maxFrac) return maxFrac;
@@ -59,6 +66,7 @@
         var w = main.width();
         $(window).mousemove(function(event) {
             vpos = normalizeFrac((event.pageX - main.position().left) / w);
+            optionalLocalStorageSetItem("vpos", vpos);
             updateLayout();
         });
         $(window).mouseup(function() {
@@ -70,6 +78,7 @@
         var h = main.height();
         $(window).mousemove(function(event) {
             hpos =  normalizeFrac((event.pageY - main.position().top) / h);
+            optionalLocalStorageSetItem("hpos", hpos);
             updateLayout();
         });
         $(window).mouseup(function() {
@@ -138,7 +147,6 @@
         var theme = theme || optionalLocalStorageGetItem('theme') || 'ace/theme/chrome';
         aceEditor.setTheme(theme);
         aceOutput.setTheme(theme)
-        // TODO: change general CSS to match theme
         optionalLocalStorageSetItem('theme', theme);
     }
 
@@ -161,12 +169,12 @@
               },
               timeout: 8000
             })
-            .success( function(response) {
+            .done( function(response) {
                 handleRunResponse(response);
             })
             .fail(function(hxr, textStatus, errorThrown) {
                 outputMode = null;
-                errorwindow.html("Request failed with error: " + textStatus);
+                errorwindow.html('<pre><samp>Request failed with error: ' + textStatus + '</samp></pre>');
             })
             .always(function() { 
                 enableEditor(aceEditor)
@@ -214,7 +222,6 @@
             showsTransferButton = false;
             transferButton.hide();
             outputMode = null;
-            // aceOutput.getSession().setValue(response.error);
             errorwindow.html('<pre><samp>' + response.error + '</samp></pre>');
             highlightErrors(response.loc_l, response.loc_c);
         } else
@@ -305,9 +312,6 @@
         helpButton      = $("#help");
         logCheckBox     = $("#log");
         themeSelect     = $("#theme");
-        navbar          = $("#control");
-        logo            = $("#logo");
-        svgData         = $("#haskell-path");
         
         aceEditor = ace.edit("editor");
         aceOutput = ace.edit("outputwindow")
