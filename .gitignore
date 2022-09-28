@@ -1,3 +1,5 @@
 .stack-work/
 *~
 Makefile
+dist-newstyle
+Procfile
