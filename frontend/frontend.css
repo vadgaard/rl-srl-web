@@ -1,147 +1,101 @@
-:root {
-    /* --accent1: #b5f7f1;
-    --accent2: #085b6e;
-    --accent3: #097291; */
-    --accent1: #172c3f; /* navbar background */
-    --accent2: #dee4ee; /* navbar text */
-    --accent3: #2ca7c5; /* navbar border */
-    --accent3_hover: #288ba3; /* navbar border */
-    --accent4: var(--accent2); /* button background */
-    --accent5: var(--accent1); /* button text */
-    --accent6: var(--accent3); /* button hover */
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
-
 html {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
-
-*, *:before, *:after {
-    box-sizing: inherit;
-}
-
 body {
-    overflow: hidden;
-    margin:0;
-    padding:0;
-    height:100%;
-    width:100%;
-    font-family: Helvetica, Arial, FreeSans, sans-serif;
-    font-size: 14px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: Helvetica, Arial, FreeSans, sans-serif;
+  font-size: 14px;
 }
-
-/*
 #control {
-    margin:0px;
-    background-color: var(--accent1);
-    border-bottom: 4px solid var(--accent2)
+  margin: 0px;
+  background-color: #012460;
+  border-bottom: 4px solid #013183;
+  color: #e1dddc;
 }
 #control button {
-    border: none;
-    height: 100%;
-    cursor: pointer;
-    margin: 0px 5px;
-    padding: 0px 10px;
-    background-color: var(--accent5);
-    color: var(--accent1);
-}
-#logo {
-    height: 45px;
-    display: inline;
-    height: 100%;
-    vertical-align: middle;
-    font-size: 18px;
-    margin: 0px 20px;
-    color: var(--accent3);
-    font-weight: bold;
-}
-*/
-#control {
-    margin:0px;
-    background-color: var(--accent1);
-    border-bottom: 4px solid var(--accent1);
-    color: var(--accent2);
-}
-#control button {
-    border: none;
-    height: 100%;
-    cursor: pointer;
-    margin: 0px 5px;
-    padding: 0px 10px;
-    background-color: var(--accent4);
-    color: var(--accent5);
+  border: none;
+  height: 100%;
+  cursor: pointer;
+  margin: 0px 5px;
+  padding: 0px 10px;
+  background-color: #e1dddc;
+  color: #012460;
 }
 #control button:hover {
-    background-color: var(--accent6);
+  background-color: #c5bdbb;
 }
-a.homepage, a:visited.homepage, a:active.homepage, a:hover.homepage {
-    text-decoration: none;
+#control a.homepage {
+  text-decoration: none;
+  color: #f5626d;
 }
-a.homepage, a:active.homepage, a:visited.homepage {
-    color: var(--accent3);
+#control a.homepage:hover {
+  color: #faaab0;
 }
-a:hover.homepage {
-    color: var(--accent3_hover);
+#control ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: inline;
 }
-#logo, #credits, #logdiv {
-    height: 45px;
-    display: inline;
-    height: 100%;
-    vertical-align: middle;
-    margin: 0px 20px;
+#control li {
+  display: inline;
+}
+#control li .el {
+  margin-right: 5px;
+}
+#control #haskell {
+  width: auto;
+  height: 40px;
+  float: right;
+  margin-right: 10px;
+  fill: #e1dddc;
+}
+#logo,
+#credits,
+#logdiv {
+  height: 45px;
+  display: inline;
+  height: 100%;
+  vertical-align: middle;
+  margin: 0px 20px;
 }
 #logo {
-    font-size: 18px;
-    font-weight: bold;
+  font-size: 18px;
+  font-weight: bold;
 }
 #credits {
-    float: right;
+  float: right;
 }
-
-#control ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: inline;
-}
-
-#control li {
-    display: inline;
-}
-
-#haskell {
-    width:auto;
-    height:40px;
-    float:right;
-    margin-right: 10px;
-}
-
-#control li .el {
-    margin-right: 5px;
-}
-
 #main {
-    background-color: white;
+  background-color: white;
 }
-
-#vsplitter, #hsplitter {
-    background-color: #aaa;
+#vsplitter,
+#hsplitter {
+  background-color: #aaa;
 }
-
 #errorwindow {
-    padding-left: 8px;
-    overflow: auto;
-    color: #333;
-    background-color: #ffd;
+  padding-left: 8px;
+  overflow: auto;
+  color: #333;
+  background-color: #ffd;
 }
-
-#editor, #outputwindow, #errorwindow {
-    font-family: Source Code Pro, monospace;
-    font-size: 12pt;
+#editor,
+#outputwindow,
+#errorwindow {
+  font-size: 12pt;
 }
-
 #outputwindow {
-    overflow: auto;
+  overflow: auto;
 }

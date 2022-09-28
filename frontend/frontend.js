@@ -49,10 +49,27 @@
         resizeTimer = setTimeout(updateLayout, 100);
     }
 
+    var minFrac = .01; var maxFrac = 1 - minFrac;
+    function normalizeFrac(frac) {
+        if (frac < minFrac) return minFrac;
+        if (frac > maxFrac) return maxFrac;
+        return frac;
+    }
     function onVSplitterMouseDownHandler() {
         var w = main.width();
         $(window).mousemove(function(event) {
-            vpos = (event.pageX - main.position().left) / w
+            vpos = normalizeFrac((event.pageX - main.position().left) / w);
+            updateLayout();
+        });
+        $(window).mouseup(function() {
+            $(window).unbind('mouseup');
+            $(window).unbind('mousemove');
+        });
+    }
+    function onHSplitterMouseDownHandler() {
+        var h = main.height();
+        $(window).mousemove(function(event) {
+            hpos =  normalizeFrac((event.pageY - main.position().top) / h);
             updateLayout();
         });
         $(window).mouseup(function() {
@@ -117,48 +134,12 @@
         setTheme($('option:selected', e.target).val());
     }
 
-    var themeTimer;
     function setTheme(theme) {
         var theme = theme || optionalLocalStorageGetItem('theme') || 'ace/theme/chrome';
         aceEditor.setTheme(theme);
         aceOutput.setTheme(theme)
         // TODO: change general CSS to match theme
-        clearTimeout(themeTimer);
-        themeTimer = setTimeout(updateColors, 100);
         optionalLocalStorageSetItem('theme', theme);
-    }
-    function updateColors() {
-        // var style = aceEditor.renderer.scroller.style;
-        // var bgColor = style.backgroundColor;
-        // var textColor = style.color;
-        // var hoverColor = style.gutter;
-        // console.log(hoverColor)
-        // navbar.css('background-color', bgColor)
-        // // navbar.css('border-bottom', '4px solid ' + borderColor)
-        // logo.css('color', textColor)
-        // var buttons = $('#control button')
-        // buttons.each(function(index) {
-        //     $(this).css('background-color', textColor)
-        //     $(this).css('color', bgColor)
-        // });
-        // buttons.hover(function() {
-        //     $(this).css('background-color', hoverColor)
-        // },function() {
-        //     $(this).css('background-color', textColor)
-        // });
-        svgData.css('fill', logo.css('color'))
-    }
-    
-    function onHSplitterMouseDownHandler() {
-        var h = main.height();
-        $(window).mousemove(function(event) {
-            hpos = (event.pageY - main.position().top) / h;
-            updateLayout();
-        });
-        $(window).mouseup(function() {
-            $(window).unbind('mouseup');
-            $(window).unbind('mousemove');
-        });
     }
 
     var runRequest = null;
@@ -188,8 +169,8 @@
                 errorwindow.html("Request failed with error: " + textStatus);
             })
             .always(function() { 
-                updateTransferButton();
                 enableEditor(aceEditor)
+                updateTransferButton();
                 updateMode();
                 runRequest = null;
                 errorwindow.scrollTop(0);
