@@ -6,7 +6,6 @@ import Text.ParserCombinators.Parsec.Language
 
 import qualified Text.ParserCombinators.Parsec.Token as Token
 
-import qualified Data.HashMap.Strict as M
 
 import Common.AST
 

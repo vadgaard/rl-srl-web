@@ -228,10 +228,7 @@ mapBinOp Geq     = \n -> boolToInt . (n>=)
 mapBinOp And     = \n m -> boolToInt (intToBool n && intToBool m)
 mapBinOp Or      = \n m -> boolToInt (intToBool n || intToBool m)
 
--- StringBinOp
-mapSBinOp :: BinOp -> [a] -> [a] -> [a]
-mapSBinOp Plus = (++)
-
+mapUnOp :: UnOp -> Int64 -> Int64
 mapUnOp Neg  = negate
 mapUnOp Sign = signum
 mapUnOp Not  = boolToInt . (==0)
