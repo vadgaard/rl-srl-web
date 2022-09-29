@@ -23,6 +23,14 @@
 // error text color
 @error-text-color:        #333;
 
+.unselectable {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;    
+}
+
 *, *:before, *:after {
     box-sizing: inherit;
 }
@@ -45,6 +53,7 @@ body {
 }
 
 #control {
+    .unselectable;
     margin:0px;
     background-color: @navbar-bg-color;
     border-bottom: 4px solid @navbar-border-color;

@@ -65,6 +65,8 @@
     function onVSplitterMouseDownHandler() {
         var w = main.width();
         $(window).mousemove(function(event) {
+            // prevents text selection but is slow with trace
+            left.addClass('unselectable')
             vpos = normalizeFrac((event.pageX - main.position().left) / w);
             optionalLocalStorageSetItem("vpos", vpos);
             updateLayout();
@@ -72,11 +74,14 @@
         $(window).mouseup(function() {
             $(window).unbind('mouseup');
             $(window).unbind('mousemove');
+            left.removeClass('unselectable')
         });
     }
     function onHSplitterMouseDownHandler() {
         var h = main.height();
         $(window).mousemove(function(event) {
+            // prevents text selection but is slow with trace
+            main.addClass('unselectable')
             hpos =  normalizeFrac((event.pageY - main.position().top) / h);
             optionalLocalStorageSetItem("hpos", hpos);
             updateLayout();
@@ -84,6 +89,7 @@
         $(window).mouseup(function() {
             $(window).unbind('mouseup');
             $(window).unbind('mousemove');
+            main.removeClass('unselectable')
         });
     }
     
@@ -312,6 +318,7 @@
         helpButton      = $("#help");
         logCheckBox     = $("#log");
         themeSelect     = $("#theme");
+        navbar          = $("#control");
         
         aceEditor = ace.edit("editor");
         aceOutput = ace.edit("outputwindow")
