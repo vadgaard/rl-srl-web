@@ -74,6 +74,12 @@ body {
   margin-right: 10px;
   fill: #e1dddc;
 }
+#control #rl-srl {
+  width: auto;
+  height: 40px;
+  margin-left: 10px;
+  fill: #e1dddc;
+}
 #logo,
 #credits,
 #logdiv {
