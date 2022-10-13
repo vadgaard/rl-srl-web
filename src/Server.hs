@@ -3,24 +3,46 @@
 module Server (server) where
 
 import Web.Scotty
+    ( file,
+      get,
+      json,
+      middleware,
+      notFound,
+      param,
+      post,
+      rescue,
+      scotty,
+      text )
 import System.Environment ( getEnv )
+import System.Directory ( listDirectory )
 import qualified Data.Text.Lazy as TL
 import Network.Wai.Middleware.Static
-    ( (>->), addBase, noDots, staticPolicy )
+    ( addBase, staticPolicy )
 
 import qualified RL.Interface
 import qualified SRL.Interface
 import JSON
+    ( ErrorResult(ErrorResult),
+      RunResult(RunResult),
+      VarTabContainer(VarTabContainer),
+      badRequest )
 
 server :: IO ()
 server = do
+  programs <- listDirectory "./frontend/programs"
   port <- read <$> getEnv "PORT"
   scotty port $ do
     -- serve frontend
-    middleware $ staticPolicy (noDots >-> addBase "frontend")
+    middleware $ staticPolicy (addBase "frontend")
 
     -- top domain
     get "/" $ file "./frontend/index.html"
+    
+    -- program list
+    get "/programs" $ json programs
+    
+    -- help section
+    get "/help" $ file "./frontend/help/index.html"
 
     -- api call
     post "/api" $ do

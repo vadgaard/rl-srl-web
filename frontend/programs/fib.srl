@@ -1,4 +1,4 @@
-// Compute the nth fibonacci pair
+// Compute the n'th fibonacci pair
 
 int n
 int v int w
@@ -9,5 +9,5 @@ from (v = 0) do
   v += w
   swap v w
   n -= 1
-loop .
+loop skip
 until (n = 0 || v > w)

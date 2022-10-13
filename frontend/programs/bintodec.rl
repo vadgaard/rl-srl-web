@@ -13,10 +13,10 @@ start: entry
 goto loop
 
 loop: fi (i = 0) start loop
-  n += (2 * q[#q - i - 1]) ** i
+  n += (2 * q[size q - i - 1]) ** i
   i += 1
-if (i = #q) end loop
+if (i = size q) end loop
 
 end: from loop
-  i -= #q
+  i -= size q
 exit

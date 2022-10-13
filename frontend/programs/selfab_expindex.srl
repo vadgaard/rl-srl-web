@@ -1,7 +1,0 @@
-list list list list list int a
-
-init a [5,5,5,5,5]
-
-a[0,1,0,2,0] ^= 10
-
-a[0,1,0,2,0] += (top (top (top a)[1])[2])

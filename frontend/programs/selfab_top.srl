@@ -1,4 +1,0 @@
-list list list int N
-
-init N [4,4,4]
-N[2,0,0] += top (top N[2])

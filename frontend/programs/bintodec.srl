@@ -11,9 +11,9 @@ q[9] += 1
 q[8] += 1
 
 from (i = 0) do
-  n += (2 * q[#q - i - 1]) ** i
+  n += (2 * q[size q - i - 1]) ** i
   i += 1
 loop .
-until (i = #q)
+until (i = size q)
 
-i -= #q
+i -= size q

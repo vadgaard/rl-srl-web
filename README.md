@@ -12,7 +12,7 @@ This is a stripped-down version of the original project description written by u
 
 The project concerns the implementation of interpreters for each of the
 two reversible programming languages RL and SRL as described in the
-article <i>Fundamentals of reversible flowchart languages</i>. RL,
+article <i>Fundamentals of reversible flowchart languages</i> by Tetsuo Yokoyama, Holger Bock Axelsen, and Robert Glück. RL,
 which is an abbreviation of Reversible Language, is a low-level,
 assembler-style language with jumps that is, thus, non-structured. SRL,
 which is an abbreviation of Structured Reversible Language, is, as the

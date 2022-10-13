@@ -184,7 +184,6 @@
             })
             .always(function() { 
                 enableEditor(aceEditor)
-                updateTransferButton();
                 updateMode();
                 runRequest = null;
                 errorwindow.scrollTop(0);
@@ -230,6 +229,7 @@
             outputMode = null;
             errorwindow.html('<pre><samp>' + response.error + '</samp></pre>');
             highlightErrors(response.loc_l, response.loc_c);
+            updateTransferButton();
         } else
         {
             aceOutput.getSession().setValue(response.output);
@@ -285,6 +285,52 @@
                 .appendTo(themeSelect);
         });
     }
+
+    function populateProgramSelect(programSelect)
+    {
+        $.getJSON('./programs', programList => {
+            $.each(programList, function(i, program) {
+                $('<option/>',
+                  { value : program,
+                    selected : getCurrentProgram() === program })
+                    .text(program)
+                    .appendTo(programSelect);
+            });
+        });
+    }
+    var programRequest = null;
+    function setProgram(program) {
+        if (programRequest !== null) return;
+        var program = program || getCurrentProgram();
+        lang = program.split('.').pop();
+        
+        programRequest = $.ajax({
+                mimeType: 'text/plain; charset=x-user-defined',
+                dataType: "text",
+                url: './programs/' + program,
+                method: 'GET',
+                timeout: 8000
+            })
+            .done( function(programText) {
+                aceEditor.getSession().setValue(programText);
+                optionalLocalStorageSetItem('program', program);
+                updateLang()
+            })
+            .fail(function(hxr, textStatus, errorThrown) {
+                errorwindow.html('<pre><samp>Request failed with error: ' + textStatus + '</samp></pre>');
+            })
+            .always(function() { 
+                programRequest = null;
+                errorwindow.scrollTop(0);
+            });
+    }
+    function getCurrentProgram() {
+        var program = optionalLocalStorageGetItem('program') || 'fib.' + lang;
+        return program;
+    }
+    function onProgramSelectChange(e) {
+        setProgram($('option:selected', e.target).val());
+    }
     
     function disableEditor(editor) {
         editor.setReadOnly(true);
@@ -318,6 +364,7 @@
         helpButton      = $("#help");
         logCheckBox     = $("#log");
         themeSelect     = $("#theme");
+        programSelect   = $("#program");
         navbar          = $("#control");
         
         aceEditor = ace.edit("editor");
@@ -366,6 +413,9 @@
         // set themelist
         var themeList = ace.require("ace/ext/themelist");
         populateThemeSelect(themeList, themeSelect);
+        
+        // set programlist
+        populateProgramSelect(programSelect)
 
         // set layout
         setInitialLayout();
@@ -383,6 +433,7 @@
         helpButton.click(function() { window.open("help.html");  });
         logCheckBox.click(onLogClickHandler);
         themeSelect.change(onThemeSelectChange);
+        programSelect.change(onProgramSelectChange);
 
         // set lang value
         query = getQueryParameters();

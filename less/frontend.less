@@ -23,7 +23,7 @@
 // error text color
 @error-text-color:        #333;
 
-.unselectable {
+.unselectable() {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
@@ -95,30 +95,36 @@ body {
         margin-right: 5px;
     }
 
-    #haskell {
+    .logo(@loc) {
+        @logo-margin: 10px;
         width:auto;
         height:40px;
-        float:right;
-        margin-right: 10px;
+        margin-@{loc}:@logo-margin;
+        float: @loc;
         fill: @navbar-text-color;
     }
-}
+    #rl-srl {
+        .logo(left);
+    }
+    #haskell {
+        .logo(right);
+    }
 
-#logo, #credits, #logdiv {
-    height: 45px;
-    display: inline;
-    height: 100%;
-    vertical-align: middle;
-    margin: 0px 20px;
-}
+    #logo, #credits, #logdiv {
+        height: 45px;
+        display: inline;
+        height: 100%;
+        vertical-align: middle;
+        margin: 0px 20px;
+    }
 
-#logo {
-    font-size: 18px;
-    font-weight: bold;
-}
-
-#credits {
-    float: right;
+    #credits {
+        float: right;
+    }
+    
+    select {
+        width: 8em;
+    }
 }
 
 #main {

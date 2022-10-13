@@ -1,8 +1,0 @@
-list list int a
-int t
-
-init a[3,3]
-
-a[0,1] ^= 30
-
-t ^= (top a)[1]
