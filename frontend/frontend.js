@@ -430,7 +430,7 @@
         invertButton.click(onInvertClickHandler);
         translateButton.click(onTranslateClickHandler);
         transferButton.click(onTransferClickHandler);
-        helpButton.click(function() { window.open("help.html");  });
+        helpButton.click(function() { window.open("/help");  });
         logCheckBox.click(onLogClickHandler);
         themeSelect.change(onThemeSelectChange);
         programSelect.change(onProgramSelectChange);

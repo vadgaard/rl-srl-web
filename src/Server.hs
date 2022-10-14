@@ -18,6 +18,7 @@ import System.Directory ( listDirectory )
 import qualified Data.Text.Lazy as TL
 import Network.Wai.Middleware.Static
     ( addBase, staticPolicy )
+import Data.List ( sort )
 
 import qualified RL.Interface
 import qualified SRL.Interface
@@ -29,7 +30,7 @@ import JSON
 
 server :: IO ()
 server = do
-  programs <- listDirectory "./frontend/programs"
+  programs <- sort <$> listDirectory "./frontend/programs"
   port <- read <$> getEnv "PORT"
   scotty port $ do
     -- serve frontend
