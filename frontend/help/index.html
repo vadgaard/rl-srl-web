@@ -1,0 +1,377 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+    <title>How to use RL and SRL</title>
+    <link rel="stylesheet" href="help/css/styles.css">
+    <script src="jquery-3.6.1.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
+    <script src="help/js/highlight.js"></script>
+  </head>
+    <body>
+      <h1>How to use RL and SRL</h1>
+        <p>This is a web interface that allows you to play around with the two reversible programming languages RL (Rerversible Language) and SRL (Structured Reversible Language) as described in the paper 
+          <i>Fundamentals of reversible flowchart languages</i> by Tetsuo Yokoyama, Holger Bock Axelsen, and Robert Glück.
+        </p>
+        <p>The two languages share atomic operations, but the overall program stucture differs between the two. As the names imply, RL programs are unstructured and consist of labeled blocks and unstructured jumps, while SRL programs look more like common scripting languages and include loops and conditionals.</p>
+
+        <p>Procedures (e.g. functions) are not supported. Further, in order to keep the languages simple, the only supported scalar type is integers.</p>
+
+      <h2>Common features</h2>
+        <p>The following structures are shared between the two languages:</p>
+        <ul>
+          <li>Variable declarations</li>
+          <li>Expressions</li>
+          <li>Atomic step operations</li>
+        </ul>
+
+        
+        <h3>Variable declarations</h3>
+          <p>In order to use a variable, it has to be declared and associated with a type at the beginning of the program:</p>
+<center>
+<pre>
+<code class="language-rl-srl">int n
+list int xs
+list list int ys
+</code>
+</pre>
+</center>
+          <p>The type declaration follows the following grammar:</p>
+<center>
+<pre>
+<code>dec  := type x
+type := list type
+      | int
+</code>
+</pre>
+</center>
+          <p>Declared integer variables are initialized to 0, while declared list variables are initilized to be empty.</p>
+
+        <h3>Expressions</h3>
+          <p>Expressions follow the following grammar:</p>
+<center>
+<pre>
+<code>e  := e1 ⊕ e2
+    | ⦻ e
+    | x
+    | x[e1, e2, ..]
+</code>
+</pre>
+</center>
+          <p>That is, an expression can either be a binary operator ⊕ (given below) on two subexpressions, a unary operator ⦻ (given below) on a single subexpression, or a variable (with or without indexing).</p>
+
+        <h3>Step operations</h3>
+          <p>The following grammar describes the atomic step operations:</p>
+<center>
+<pre>
+<code>s  := x ⊕'= e
+    | x[e1, e2, ..] ⊕'= e
+    | push x y
+    | pop x y
+    | skip
+    | swap x y
+    | init x [e1, e2, ..]
+    | free x [e1, e2, ..]
+</code>
+</pre>
+</center>
+          <p>The shared step operations work as follows:</p>
+          <center>
+            <table>
+              <tr>
+                <th scope="col"style="width:30%; text-align: left;">Operation</th>
+                <th scope="col" style="width:70%; text-align: left;">Description</th>
+              </tr>
+              <tr>
+                <td><code class="language-rl-srl">x ⊕'= e</code></td>
+                <td>
+                  Update on scalar variable <code class="language-rl-srl">x</code> with update operator ⊕' (given below).
+                </td>
+              </tr>
+              <tr>
+                <td><code class="language-rl-srl">x[e1, e2, ..] ⊕'= e</code></td>
+                <td>
+                  Update on list variable <code class="language-rl-srl">x</code> with indices <code class="language-rl-srl">e1, e2, ..</code> and update operator ⊕' as described above. Like with scalar variables, this fails if the updated index occurs on the same list variable on the right-hand side.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code class="language-rl-srl">push x y</code>
+                </td>
+                <td>
+                  Push value of variable <code class="language-rl-srl">x</code> to list variable <code class="language-rl-srl">y</code> and clear <code class="language-rl-srl">x</code>.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code class="language-rl-srl">pop x y</code>
+                </td>
+                <td>
+                  Pop value from top of list variable <code class="language-rl-srl">x</code> and save to variable <code class="language-rl-srl">y</code>. Fails if <code class="language-rl-srl">y</code> is not cleared beforehand.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code class="language-rl-srl">skip</code> (or <code class="language-rl-srl">.</code>)
+                </td>
+                <td>Do nothing.</td>
+              </tr>
+              <tr>
+                <td>
+                  <code class="language-rl-srl">swap x y</code>
+                </td>
+                <td>
+                  Swap the contents of variables <code class="language-rl-srl">x</code> and <code class="language-rl-srl">y</code>.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code class="language-rl-srl">init x [e1, e2, ..]</code>
+                </td>
+                <td>
+                  Initialize list with zeroes.
+                  <code class="language-rl-srl">init x [2,2]</code> will thus initialize a 2×2 list with zeroes. Fails if the number of dimensions in the <code class="language-rl-srl">init</code> operation does not match the number of dimensions given in the type declaration.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code class="language-rl-srl">free x [e1, e2, ..]</code>
+                </td>
+                <td>
+                  Empties a list.
+                  <code class="language-rl-srl">free x [2,2]</code> will thus empty a 2×2 list. Fails if the list does not exclusively consist of zeroes, or the number of dimensions in the <code class="language-rl-srl">init</code> operation does not match the number of dimensions given in the type declaration.
+                </td>
+              </tr>
+            </table>
+          </center>
+        
+        <h3>Operators</h3>
+          <p>The following grammar describes the supported <b>binary operators</b> for expressions and updates:</p>
+<center>
+<pre>
+<code>⊕' := + | - | ^ | * | /
+⊕  := ⊕' | ** | % | = | != | < | <= | > | >= | || | && 
+</code>
+</pre>
+</center>
+          <p>The binary operators work as follows:</p>
+          <center>
+            <table>
+              <tr>
+                <th scope="col"style="width:15%; text-align: left;">Operator</th>
+                <th scope="col" style="width:85%; text-align: left;">Description</th>
+              </tr>
+              <tr>
+                <td><code>+</code></td>
+                <td>Addition</td>
+              </tr>
+              <tr>
+                <td><code>-</code></td>
+                <td>Subtraction</td>
+              </tr>
+              <tr>
+                <td><code>^</code></td>
+                <td>XOR</td>
+              </tr>
+              <tr>
+                <td><code>*</code></td>
+                <td>Multiplication</td>
+              </tr>
+              <tr>
+                <td><code>/</code></td>
+                <td>Division. Will fail when used as update operator if there is a non-zero remainder.</td>
+              </tr>
+              <tr>
+                <td><code>**</code></td>
+                <td>Power</td>
+              </tr>
+              <tr>
+                <td><code>%</code></td>
+                <td>Modulo</td>
+              </tr>
+              <tr>
+                <td><code>=</code></td>
+                <td>Equality. Returns 1 if the two operand are equal, and 0 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code>!=</code></td>
+                <td>Inequality. Returns 0 if the two operand are equal, and 1 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code><</code></td>
+                <td>Less than. Returns 1 if the left operand is smaller than the right operand, and 0 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code><=</code></td>
+                <td>Less than or equal to. Returns 1 if the left operand is smaller than or equal to the right operand, and 0 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code>></code></td>
+                <td>Greater than. Returns 1 if the left operand is greater than the right operand, and 0 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code><=</code></td>
+                <td>Greater than or equal to. Returns 1 if the left operand is greater than or equal to the right operand, and 0 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code>||</code></td>
+                <td>Logical or. Returns 1 if either operand is non-zero, and 0 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code>&&</code></td>
+                <td>Logical and. Returns 1 if both operands are non-zero, and 0 otherwise.</td>
+              </tr>
+            </table>
+          </center>
+
+          <p>The following grammar describes the supported <b>unary operators</b> for expressions and updates:</p>
+<center>
+<pre>
+<code>⦻ := - | sig | not | null | size | empty | top
+</code>
+</pre>
+</center>
+          <p>The unary operators work as follows:</p>
+          <center>
+            <table>
+              <tr>
+                <th scope="col"style="width:15%; text-align: left;">Operator</th>
+                <th scope="col" style="width:85%; text-align: left;">Description</th>
+              </tr>
+              <tr>
+                <td><code>-</code></td>
+                <td>Arithmetic negation</td>
+              </tr>
+              <tr>
+                <td><code>sig</code></td>
+                <td>Sign operator. Returns -1 if argument is a negative integer, 1 if argument is a positive integer, and 0 otherwise. Fails if given a list as argument.</td>
+              </tr>
+              <tr>
+                <td><code>not</code></td>
+                <td>Logical negation. Returns 1 if argument is 0, and 0 otherwise.</td>
+              </tr>
+              <tr>
+                <td><code>null</code></td>
+                <td>Returns 1 if argument consists exclusively of zeroes, and 0 otherwise. Also works on scalar variables.</td>
+              </tr>
+              <tr>
+                <td><code>empty</code></td>
+                <td>Returns 1 if argument list is empty, and 0 otherwise. Fails on scalar variables.</td>
+              </tr>
+              <tr>
+                <td><code>top</code></td>
+                <td>Returns the head of the list argument. Fails on scalar variables.</td>
+              </tr>
+            </table>
+          </center>
+
+      <h2>Writing RL programs</h2>
+      <p>An RL program consists of one or more labeled blocks that jump to other blocks either conditionally or unconditionally.</p>
+      <p>RL programs follow the following grammar:</p>
+<center>
+<pre>
+<code>RLprogram := block+
+
+block := l: f s* j
+
+f := from l
+   | fi e from l1 else l2
+   | entry
+
+j := goto l
+   | if e goto l1 else l2
+   | exit
+</code>
+</pre>
+</center>
+
+      <p>That is, an RL program is one or more labeled blocks, each with a come-from assertion <code>f</code>, zero or more step operations <code>s</code>, and a jump <code>j</code>.</p>
+
+      <p>In order to ensure reversibility, there are a few restrictions to how the program is written:</p>
+      <ul>
+        <li>
+          There must be exactly one entry and one exit.
+        </li>
+        <li>
+            When jumping to a non-entry block, the label of the current block must match the label in the new block's come-from assertion. That is, if the come-from assertion is unconditional (i.e. <code class="language-rl-srl">from l'</code>), the label <code class="language-rl-srl">l</code> of the current block must be equal to <code class="language-rl-srl">l'</code>. If, on the other hand, the come-from assertion is <code class="language-rl-srl">fi e from l1 else l2</code>, <code class="language-rl-srl">l</code> must be equal to <code class="language-rl-srl">l1</code> if <code class="language-rl-srl">e</code> evaluates to 1, and <code class="language-rl-srl">l2</code> otherwise.
+        </li>
+      </ul>
+      
+      <p>The following RL program computes the n'th Fibonacci pair:</p>
+<center>
+<pre>
+<code class="language-rl-srl">int n
+int v int w
+
+start: entry
+  n ^= 16
+  w ^= 1
+goto loop
+
+loop: fi (v = 0) start loop
+  v += w
+  swap v w
+  n -= 1
+if (n = 0 || v > w) end loop
+
+end: from loop
+exit
+</code>
+</pre>
+</center>
+
+      <h2>Writing SRL programs</h2>
+      <p>An SRL program consists of steps, loops, and conditionals. It's more akin to your regular high-level programming language than RL, but it still has restrictions to ensure the reversibility of programs.
+      <p>SRL programs follow the following grammar:</p>
+<center>
+<pre>
+<code>SRLprogram := b
+
+b := s
+   | b b
+   | if e1 then b1 else b2 fi e2
+   | from e1 do b1 loop b2 until e2
+</code>
+</pre>
+</center>
+
+      <p>That is, an SRL program is simply a linear sequence of instructions including conditionals and loops.</p>
+      <p>In order to ensure reversibility, there are a few restrictions to how the program is written:</p>
+      <ul>
+        <li>
+          The entry condition <code class="language-rl-srl">e1</code> in a reversible if-statement before the execution of either branch must evaluate to the same value as the exit condition <code class="language-rl-srl">e2</code> <i>after</i> the execution of the given branch.
+        </li>
+        <li>
+          The entry condition <code class="language-rl-srl">e1</code> in a reversible loop must evaluate to true (i.e. a non-zero value) exactly once when the program enters the loop, and to false (i.e. 0) afterwards. After entering the loop, the first loop body <code>b1</code> is executed. Then, if the exit condition <code>e2</code> evaluates to true (i.e. a non-zero value), the program exits the loop. Otherwise, the second loop body <code>b2</code> is executed and the cycle repeats.
+        </li>
+      </ul>
+      
+      <p>The paper describes the three major structures of SRL as flowchart structures (and how they are executed) in the following way:</p>
+      <center>
+        <img src="./help/img/srl.gif"></img>
+      </center>
+      <p>Note that if-statements are here called <i>selections</i>.</p>
+      
+      <p>The following SRL program computes the n'th Fibonacci pair:</p>
+<center>
+<pre>
+<code class="language-rl-srl">int n
+int v int w
+
+n ^= 16
+w ^= 1
+from (v = 0) do
+  v += w
+  swap v w
+  n -= 1
+loop skip
+until (n = 0 || v > w)
+</code>
+</pre>
+</center>
+    </a>
+  </body>
+</html>
+
+
+      <h2>TODO: Inversion</h2>
+      <h2>TODO: Translation</h2>
