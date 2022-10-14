@@ -27,7 +27,7 @@ body {
   margin: 0px;
   background-color: #012460;
   border-bottom: 4px solid #013183;
-  color: #e1dddc;
+  color: #f6fdff;
 }
 #control button {
   border: none;
@@ -35,11 +35,20 @@ body {
   cursor: pointer;
   margin: 0px 5px;
   padding: 0px 10px;
-  background-color: #e1dddc;
+  background-color: #f6fdff;
   color: #012460;
 }
 #control button:hover {
-  background-color: #c5bdbb;
+  background-color: #b9efff;
+}
+#control button:disabled,
+#control button:disabled:hover {
+  background-color: #f6fdff;
+  color: #b6b6b6;
+  cursor: default;
+}
+#control #lang {
+  width: 5em;
 }
 #control a.homepage {
   text-decoration: none;
@@ -65,14 +74,14 @@ body {
   height: 40px;
   margin-left: 10px;
   float: left;
-  fill: #e1dddc;
+  fill: #f6fdff;
 }
 #control #haskell {
   width: auto;
   height: 40px;
   margin-right: 10px;
   float: right;
-  fill: #e1dddc;
+  fill: #f6fdff;
 }
 #control #logo,
 #control #credits,
@@ -81,13 +90,16 @@ body {
   display: inline;
   height: 100%;
   vertical-align: middle;
-  margin: 0px 20px;
+  margin: 0px 10px;
 }
 #control #credits {
   float: right;
 }
-#control select {
-  width: 8em;
+#control #program {
+  width: 7em;
+}
+#control #theme {
+  width: 10em;
 }
 #main {
   background-color: white;

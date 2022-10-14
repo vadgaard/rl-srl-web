@@ -3,7 +3,7 @@
 // navbar background
 @navbar-bg-color:         #012460;
 // navbar link
-@navbar-text-color:       #e1dddc;
+@navbar-text-color:       #f6fdff;
 // navbar text
 @navbar-link-color:       #f5626d;
 // button background
@@ -70,6 +70,15 @@ body {
         &:hover {
             background-color: @button-hover-color
         }
+        &:disabled, &:disabled:hover {
+            background-color: @button-bg-color;
+            color: #b6b6b6;
+            cursor: default;
+        }
+    }
+    
+    #lang {
+        width: 5em;
     }
 
     a.homepage {
@@ -115,15 +124,18 @@ body {
         display: inline;
         height: 100%;
         vertical-align: middle;
-        margin: 0px 20px;
+        margin: 0px 10px;
     }
 
     #credits {
         float: right;
     }
     
-    select {
-        width: 8em;
+    #program {
+        width: 7em;
+    }
+    #theme {
+        width: 10em;
     }
 }
 

@@ -192,10 +192,12 @@
     
     function updateTransferButton() {
         if (showsTransferButton) {
-            transferButton.show();
+            // transferButton.show();
+            transferButton.prop("disabled", false);
         }
         else {
-            transferButton.hide();
+            // transferButton.hide();
+            transferButton.prop("disabled", true);
         }
     }
 
@@ -225,15 +227,15 @@
         errorwindow.html('');
         if (response.error) {
             showsTransferButton = false;
-            transferButton.hide();
+            // transferButton.hide();
             outputMode = null;
             errorwindow.html('<pre><samp>' + response.error + '</samp></pre>');
             highlightErrors(response.loc_l, response.loc_c);
-            updateTransferButton();
         } else
         {
             aceOutput.getSession().setValue(response.output);
         }
+        updateTransferButton();
         
         if (response.log !== null) {
             errorwindow.append('<pre><samp>Execution trace:</pre></samp>' )
@@ -356,7 +358,7 @@
         runButton       = $("#run");
         invertButton    = $("#invert");
         translateButton = $("#translate");
-        transferButton  = $("#transfer"); transferButton.hide();
+        transferButton  = $("#transfer"); // transferButton.hide();
         saveButton      = $("#save");
         shareButton     = $("#share");
         openButton      = $("#open");
@@ -420,6 +422,8 @@
         // set layout
         setInitialLayout();
         updateLayout();
+        showsTransferButton = false;
+        updateTransferButton();
 
         // define elements
         $(window).resize(onWindowResizeHandler);
