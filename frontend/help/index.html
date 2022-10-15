@@ -16,7 +16,7 @@
         <small>By <a class="homepage" href="https://www.vadg.io" target="_blank">Lars</a> and <a class="homepage" href="https://voreswww.dk/" target="_blank">Anders</a>; frontend inspired by <a class="homepage" href="https://boxprover.utr.dk/" target="_blank">Boxprover</a></small>
         <br/>
         <small><a href="/">Back to RL|SRL playground</a></small>
-        <p>This is a web interface that allows you to play around with the two reversible programming languages RL (Rerversible Language) and SRL (Structured Reversible Language) as described in the paper 
+        <p>This is a web interface that allows you to play artacund with the two reversible programming languages RL (Rerversible Language) and SRL (Structured Reversible Language) as described in the paper 
           <i>Fundamentals of reversible flowchart languages</i> by Tetsuo Yokoyama, Holger Bock Axelsen, and Robert Glück.
         </p>
         <p>The two languages share atomic operations, but the overall program stucture differs between the two. As the names imply, RL programs are unstructured and consist of labeled blocks and unstructured jumps, while SRL programs look more like common scripting languages and include loops and conditionals.</p>
@@ -374,10 +374,106 @@ until (n = 0 || v > w)
 </code>
 </pre>
 </center>
-    </a>
+
+      <h2>Inversion</h2>
+      <p>The thing about reversible programming languages is that any well-formed program can be inverted. In practice, this means that if executing program <i>p</i> with initial state <i>&sigma;<sub>start</sub></i> results in end state <i>&sigma;<sub>end</sub></i>, executing the inverted program <i>p<sup>-1</sup></i> with inital state <i>&sigma;<sub>end</sub></i> results in end state <i>&sigma;<sub>start</sub></i>.</p>
+      
+      <p>The <i>Invert</i> button in the interface outputs the inverted program according to the following specifications.</p>
+
+      <h3>Inversion of step operations</h3>
+      <p>The inversion of shared step operations follows the following specification:</p>
+      <center>
+        <img src="./help/img/inv-common.gif"></img>
+      </center>
+      
+      <h3>Inversion of RL programs</h3>
+      <p>The inversion of RL programs follows the following specification:</p>
+      <center>
+        <img src="./help/img/inv-rl.gif"></img>
+      </center>
+
+      <h3>Inversion of SRL programs</h3>
+      <p>The inversion of SRL programs follows the following specification:</p>
+      <center>
+        <img src="./help/img/inv-srl.gif"></img>
+      </center>
+      
+      <h3>Things to keep in mind</h3>
+      <p>Let us consider the following SRL program:</p>
+<center>
+<pre>
+<code class="language-rl-srl">int n
+int v int w
+
+n ^= 16
+w ^= 1
+from (v = 0) do
+  v += w
+  swap v w
+  n -= 1
+loop skip
+until (n = 0 || v > w)
+</code>
+</pre>
+</center>
+      <p>In this example, the initial state (or the "input" to the program) is simply <i>n := 16</i>. Running the inverter on this program, we get the following:</p>
+<center>
+<pre>
+<code class="language-rl-srl">int n
+int v int w
+
+from (n = 0 || v > w) do
+  n += 1
+  swap v w
+  v -= w
+loop
+  skip
+until (v = 0)
+w ^= 1
+n ^= 16
+</code>
+</pre>
+</center>
+
+      <p>However, we need to manually specify the inital state of the program. In the inverted program, we would have to set the initial state to be an end state of the non-inverted program:</p>
+<center>
+<pre>
+<code class="language-rl-srl">int n
+int v int w
+
+v ^= 987
+w ^= 1597
+
+from (n = 0 || v > w) do
+  n += 1
+  swap v w
+  v -= w
+loop
+  skip
+until (v = 0)
+w ^= 1
+</code>
+</pre>
+</center>
+
+<p>Running this program would result in an end state with <i>n := 16</i> as expected; setting <i>v := 6765</i>, <i>w := 10946</i> would result in and end state with <i>n := 20</i>, etc.</p>
+      
+      <h2>Translation</h2>
+      <p>The paper describes translators from SRL to RL in vice versa. Since step operations are shared between the two languages, these stay the same. As such, only the language-specific structures have to be translated.</p>
+      
+      <p>The <i>Translate</i> button in the interface outputs the translated program according to the following specifications.</p>
+      
+      <h3>Translating from SRL to RL</h3>
+      <p>Translating a structured SRL program to an unstructured RL program is quite trivial; each control structure has a fixed translation to labeled blocks of instructions. More specifically, the translator looks as follows:</p>
+      <center>
+        <img src="./help/img/trl-srl.gif"></img>
+      </center>
+
+      <h3>Translating from RL to SRL</h3>
+      <p>Translating an unstructured RL program to a structured SRL program is not as trivial; inferring control structures from arbitrary, unstructured jumps is a complex problem, and as such, the RL program is simulated using a list of <i>control variables</i> that keeps track of the simulation. More specifically, the translator looks as follows:</p>
+      <center>
+        <img src="./help/img/trl-rl.gif"></img>
+      </center>
+
   </body>
 </html>
-
-
-      <h2>TODO: Inversion</h2>
-      <h2>TODO: Translation</h2>
