@@ -10,6 +10,7 @@ import Web.Scotty
       notFound,
       param,
       post,
+      redirect,
       rescue,
       scotty,
       text )
@@ -17,7 +18,7 @@ import System.Environment ( getEnv )
 import System.Directory ( listDirectory )
 import qualified Data.Text.Lazy as TL
 import Network.Wai.Middleware.Static
-    ( addBase, staticPolicy )
+    ( addBase, staticPolicy, noDots, (>->))
 import Data.List ( sort )
 
 import qualified RL.Interface
@@ -34,7 +35,7 @@ server = do
   port <- read <$> getEnv "PORT"
   scotty port $ do
     -- serve frontend
-    middleware $ staticPolicy (addBase "frontend")
+    middleware $ staticPolicy (noDots >-> addBase "frontend")
 
     -- top domain
     get "/" $ file "./frontend/index.html"
