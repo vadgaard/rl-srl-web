@@ -10,20 +10,20 @@ define("ace/mode/rlsrl_highlight_rules", function(require, exports, module) {
             "start" : [
                 {
                     token : "comment",
-                    regex : "//\ .*$"
+                    regex : "//.*$"
                 }, {
                     token : "keyword",
-                    regex : "\\b(?:goto|exit|entry|if|fi|then|else|from|do|loop|until|int|string|list)\\b"
+                    regex : "\\b(?:goto|exit|entry|if|fi|then|else|from|do|loop|until|int|list|reverse|push|pop|\\\.|skip|swap|free|init)\\b"
                 }, {
                     token : "keyword",
                     regex : ";(?![a-zA-Z0-9_])"
                 }, {
                     // token : "support.constant",
                     token : "keyword",
-                    regex : "(?:\\\.|skip|swap|neg|sig|empty|reverse|size|top|null|free|init)\\b"
+                    regex : "(?:neg|sig|empty|size|top|null|and|or|not)\\b"
                 }, {
                     token : "keyword.operator",
-                    regex : "(?:\\\+=|-=|\\\^=|=|\\\|\\\||>|<|~|and|or|not)"
+                    regex : "(?:\\\+=|-=|\\\*=|\\\^=|\\\/=|=|\\\|\\\||>|<|~|\\\*\\\*|\\\%)"
                 }, {
                    token : "paren.keyword.operator",
                     regex : "[[(]"
@@ -31,8 +31,8 @@ define("ace/mode/rlsrl_highlight_rules", function(require, exports, module) {
                    token : "paren.keyword.operator",
                    regex : "[\\])]"
                 }, {
-                    token : "variable.parameter",
-                    regex : "[a-z@?#][-a-zA-Z0-9_!'\"#¤&/=?@£$+><]*"
+                    token : "variable",
+                    regex : "[a-zA-z][a-zA-Z0-9_']*"
                 } , {
                     token : "variable.other",
                     // regex : "[A-Z_][-a-zA-Z0-9_!'\"#¤&/=?@£$+]*"

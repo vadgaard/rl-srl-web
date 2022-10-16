@@ -2,8 +2,10 @@
 <html>
   <head>
     <script type="text/javascript">
-    if (location.protocol !== 'https:') {
-        location.replace(`https:${location.href.substring(location.protocol.length)}`);
+    if (!(location.hostname === "localhost" || location.hostname === "127.0.0.1")) {
+      if (location.protocol !== 'https:') {
+          location.replace(`https:${location.href.substring(location.protocol.length)}`);
+      }
     }
     </script>
     <meta charset="UTF-8" />
@@ -91,10 +93,14 @@
           <button type="button" id="transfer" title="Transfer program to editor (and set language if applicable)"><i class="el el-arrow-left"></i>Transfer</button>
         </li>
         <li>
-          <select id="program" title="Program"></select>
+          <select id="program" title="Program">
+            <option selected disabled>Program</option>
+          </select>
         </li>
         <li>
-          <select id="theme" title="Theme"></select>
+          <select id="theme" title="Theme">
+            <option selected disabled>Theme</option>
+          </select>
         </li>
         <li>
           <div id="logdiv">

@@ -293,8 +293,7 @@
         $.getJSON('./programs', programList => {
             $.each(programList, function(i, program) {
                 $('<option/>',
-                  { value : program,
-                    selected : getCurrentProgram() === program })
+                  { value : program })
                     .text(program)
                     .appendTo(programSelect);
             });
@@ -303,7 +302,7 @@
     var programRequest = null;
     function setProgram(program) {
         if (programRequest !== null) return;
-        var program = program || getCurrentProgram();
+        var program = program;
         lang = program.split('.').pop();
         
         programRequest = $.ajax({
@@ -315,7 +314,6 @@
             })
             .done( function(programText) {
                 aceEditor.getSession().setValue(programText);
-                optionalLocalStorageSetItem('program', program);
                 updateLang()
             })
             .fail(function(hxr, textStatus, errorThrown) {
@@ -326,12 +324,9 @@
                 errorwindow.scrollTop(0);
             });
     }
-    function getCurrentProgram() {
-        var program = optionalLocalStorageGetItem('program') || 'fib.' + lang;
-        return program;
-    }
     function onProgramSelectChange(e) {
         setProgram($('option:selected', e.target).val());
+        $('#program').val($('option:disabled', e.target).val());
     }
     
     function disableEditor(editor) {
@@ -461,50 +456,6 @@
             var script = optionalLocalStorageGetItem("script");
             if (script !== null) {
                 aceEditor.getSession().setValue(script);
-            }
-            else {
-                if (lang == 'srl') {
-                    aceEditor.getSession().setValue(
-`// Compute the nth fibonacci pair
-
-int n
-int v int w
-
-n ^= 16
-w ^= 1
-from (v = 0) do
-  v += w
-  swap v w
-  n -= 1
-loop .
-until (n = 0 || v > w)`
-                    );
-                }
-                else if (lang == 'rl') {
-                    aceEditor.getSession().setValue(
-`// Compute the nth fibonacci pair
-
-int n
-int v int w
-
-start: entry
-  n ^= 16
-  w ^= 1
-goto loop
-
-loop: fi (v = 0) start loop
-  v += w
-  swap v w
-  n -= 1
-if (n = 0 || v > w) end loop
-
-end: from loop
-exit`
-                    );
-                }
-                else {
-                    aceEditor.getSession().setValue('');
-                }
             }
         }
         
