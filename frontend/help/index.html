@@ -28,10 +28,10 @@
     <br />
     <small><a href="/">Back to RL|SRL playground</a></small>
     <p>
-      This is a web interface that allows you to play artacund with the two
+      This is a web interface that allows you to play around with the two
       reversible programming languages RL (Rerversible Language) and SRL
       (Structured Reversible Language) as described in the paper
-      <i>Fundamentals of reversible flowchart languages</i> by Tetsuo Yokoyama,
+      <a href="https://www.sciencedirect.com/science/article/pii/S030439751500691X" target="blank_"><i>Fundamentals of reversible flowchart languages</i></a> by Tetsuo Yokoyama,
       Holger Bock Axelsen, and Robert Glück.
     </p>
     <p>
@@ -58,8 +58,19 @@
             <li><a href="#Step_operations">Step operations</a></li>
             <li><a href="#Operators">Operators</a></li>
           </ul>
-          <li><a href="#Writing_RL_programs">Writing RL programs</a></li>
-          <li><a href="#Writing_SRL_programs">Writing SRL programs</a></li>
+          <li><a href="#Writing_programs">Writing programs</a></li>
+          <ul>
+            <li>
+              <a href="#Writing_RL_programs"
+                >Writing RL programs</a
+              >
+            </li>
+            <li>
+              <a href="#Writing_SRL_programs"
+                >Writing SRL programs</a
+              >
+            </li>
+          </ul>
           <li><a href="#Inversion">Inversion</a></li>
           <ul>
             <li>
@@ -96,12 +107,14 @@
 
     <div id="contents">
       <h2><a name="Common_features">Common features</a></h2>
-      <p>The following structures are shared between the two languages:</p>
+      <p>The following constructs are shared between the two languages:</p>
       <ul>
         <li>Variable declarations</li>
         <li>Expressions</li>
         <li>Atomic step operations</li>
       </ul>
+      
+      <p>This chapter goes through these constructs and describes how they are used.</p>
 
       <h3><a name="Variable_declarations">Variable declarations</a></h3>
       <p>
@@ -259,8 +272,8 @@ type := list type
                 Empties a list.
                 <code class="language-rl-srl">free x [2,2]</code> will thus
                 empty a 2×2 list. Fails if the list does not exclusively consist
-                of zeroes, or the number of dimensions in the
-                <code class="language-rl-srl">init</code> operation does not
+                of zeroes, or if the number of dimensions in the
+                <code class="language-rl-srl">free</code> operation does not
                 match the number of dimensions given in the type declaration.
               </td>
             </tr>
@@ -449,7 +462,14 @@ type := list type
         </table>
       </center>
 
-      <h2><a name="Writing_RL_programs">Writing RL programs</a></h2>
+      <h2><a name="Writing_programs"></a>Writing programs</h2>
+      <p>
+        Writing programs in RL and SRL is simple enough. This chapter goes through
+        the program syntax and structure for each of the two programming languages.
+        Further, a simple example program is given for each.
+      </p>
+
+      <h3><a name="Writing_RL_programs">Writing RL programs</a></h3>
       <p>
         An RL program consists of one or more labeled blocks that jump to other
         blocks either conditionally or unconditionally.
@@ -521,7 +541,7 @@ exit
 </pre>
       </center>
 
-      <h2><a name="Writing_SRL_programs">Writing SRL programs</a></h2>
+      <h3><a name="Writing_SRL_programs">Writing SRL programs</a></h3>
       <p>
         An SRL program consists of steps, loops, and conditionals. It's more
         akin to your regular high-level programming language than RL, but it
@@ -607,7 +627,8 @@ until (n = 0 || v &gt; w)
 
       <p>
         The <i>Invert</i> button in the interface outputs the inverted program
-        according to the following specifications.
+        according to the following specifications. This chapter covers how both
+        shared and language-specific constructs are inverted.
       </p>
 
       <h3>
@@ -711,7 +732,8 @@ w ^= 1
 
       <p>
         The <i>Translate</i> button in the interface outputs the translated
-        program according to the following specifications.
+        program according to the following specifications. This chapter covers
+        how language-specific constructs are translated between the two languages.
       </p>
 
       <h3>
