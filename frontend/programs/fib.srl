@@ -5,9 +5,9 @@ int v int w
 
 n ^= 16
 w ^= 1
-from (v = 0) do
-  v += w
-  swap v w
-  n -= 1
+from v = 0 do
+    v += w
+    swap v w
+    n -= 1
 loop skip
-until (n = 0 || v > w)
+until n = 0 || v > w

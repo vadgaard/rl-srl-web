@@ -5,14 +5,16 @@ list int p
 
 n += 1829
 v += 2
-from ((empty p) and v = 2) do
-  if (n % v = 0) then
-    n /= v
-    push v p
-    v ^= top p
-  else v += 1
-  fi (not (empty p) and top p = v)
-loop .
-until (n = 1)
+
+from (empty p) and v = 2 do
+    if n % v = 0 then
+        n /= v
+        push v p
+        v ^= top p
+    else v += 1
+    fi not (empty p) and top p = v
+loop skip
+until n = 1
+
 v -= top p
 n -= 1

@@ -4,12 +4,12 @@ int n
 list int q
 
 start: entry
-goto loop
+goto loop_block
 
-loop: fi (empty q) start loop
-  n += size q ** 2
-  push n q
-if (size q = 10) end loop
+loop_block: fi (empty q) start loop_block
+    n += size q ** 2
+    push n q
+if (size q = 10) end loop_block
 
-end: from loop
+end: from loop_block
 exit

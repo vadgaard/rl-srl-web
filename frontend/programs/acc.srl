@@ -4,8 +4,9 @@ int n
 int v
 
 n ^= 10
-from (v = 0) do
-  v += n
-  n -= 1
-loop .
-until (n = 0)
+
+from v = 0 do
+    v += n
+    n -= 1
+loop skip
+until n = 0

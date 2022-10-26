@@ -4,13 +4,13 @@ int n
 int v
 
 start: entry
-  n ^= 10
-goto loop
+    n ^= 10
+goto loop_block
 
-loop: fi (v = 0) start loop
-  v += n
-  n -= 1
-if (n) loop end
+loop_block: fi (v = 0) start loop_block
+    v += n
+    n -= 1
+if n loop_block end
 
-end: from loop
+end: from loop_block
 exit

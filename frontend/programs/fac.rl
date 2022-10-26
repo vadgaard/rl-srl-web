@@ -3,14 +3,14 @@
 int n int v
 
 start: entry
-  n ^= 5
-  v ^= 1
-goto loop
+    n ^= 5
+    v ^= 1
+goto loop_block
 
-loop: fi (v = 1) start loop
-  v *= n
-  n -= 1
-if (n = 0) end loop
+loop_block: fi (v = 1) start loop_block
+    v *= n
+    n -= 1
+if (n = 0) end loop_block
 
-end: from loop
+end: from loop_block
 exit

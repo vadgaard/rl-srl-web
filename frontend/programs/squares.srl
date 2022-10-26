@@ -3,8 +3,8 @@
 int n
 list int q
 
-from (empty q) do
-  n += size q ** 2
-  push n q
-loop .
-until (size q = 10)
+from empty q do
+    n += size q ** 2
+    push n q
+loop skip
+until size q = 10
