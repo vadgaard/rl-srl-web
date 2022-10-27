@@ -1,6 +1,6 @@
 # RL/SRL playground
 
-This is a web interface that allows you to play around with the two reversible programming languages RL (**R**erversible **L**anguage) and SRL (**S**tructured **R**eversible **L**anguage) implemented by me and Anders Frederik Jørgensen as part of our bachelor's thesis. The implementation is from 2018 and was our first experience with Haskell, whereas the web interface was implemented more recently by myself.
+This is a web interface that allows you to play around with the two reversible programming languages RL (**R**erversible **L**anguage) and SRL (**S**tructured **R**eversible **L**anguage) implemented by me and Anders Frederik Jørgensen as part of our bachelor's thesis. The implementation is from 2018 and was our first experience with Haskell, which in turn means that running time efficiency was not a priority. The web interface, on the other hand, was implemented more recently by myself.
 
 The backend of this interface is built in Haskell as well. It uses Scotty for the server implementation and can be built with `stack build` and run with `stack run`.
 
@@ -12,13 +12,16 @@ This is a stripped-down version of the original project description written by u
 
 The project concerns the implementation of interpreters for each of the
 two reversible programming languages RL and SRL as described in the
-article <i>Fundamentals of reversible flowchart languages</i> by Tetsuo Yokoyama, Holger Bock Axelsen, and Robert Glück. RL,
+article <i>Fundamentals of reversible flowchart languages</i> by Tetsuo
+Yokoyama, Holger Bock Axelsen, and Robert Glück. RL,
 which is an abbreviation of Reversible Language, is a low-level,
 assembler-style language with jumps that is, thus, non-structured. SRL,
 which is an abbreviation of Structured Reversible Language, is, as the
 name implies, a structured version of RL (with conditionals and loops).
-Furthermore, our implementation will support two interesting program transformations, namely
-program inversion of each language and translation <i>between</i> them - as proven possible by the Structured Reversible Program Theorem. To test our implementation and evaluate the practicality of the two
+Furthermore, our implementation will support two interesting program
+transformations, namely program inversion of each language and translation
+<i>between</i> them - as proven possible by the Structured Reversible
+Program Theorem. To test our implementation and evaluate the practicality of the two
 languages, we write a collection of test programs of varying complexity.
 
 ## Boundaries of problem definition
