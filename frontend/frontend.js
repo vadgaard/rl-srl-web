@@ -1,5 +1,4 @@
 (function() {
-    var activeTabName;
     var main;
     var editor;
     var vsplitter;
@@ -17,7 +16,7 @@
     var hpos;
     // position of vertical splitter as a fraction of whole page
     var vpos;
-    
+
     function updateLayout() {
         var w = main.width();
         var h = main.height();
@@ -92,7 +91,7 @@
             main.removeClass('unselectable')
         });
     }
-    
+
     function onLangClickHandler() {
         toggleLang();
     }
@@ -105,7 +104,7 @@
         langButtonText.html(lang.toUpperCase());
         outputMode = null;
     }
-    
+
     function onRunClickHandler() {
         resultLang = null;
         showsTransferButton = false;
@@ -121,12 +120,12 @@
     }
 
     function onTranslateClickHandler() {
-        resultLang = getOtherLang(); 
+        resultLang = getOtherLang();
         showsTransferButton = true;
         outputMode = lang;
         runProgram('translate');
     }
-    
+
     function onTransferClickHandler() {
         if (resultLang !== null) {
             aceEditor.getSession().setValue(aceOutput.getSession().getValue())
@@ -182,14 +181,14 @@
                 outputMode = null;
                 errorwindow.html('<pre><samp>Request failed with error: ' + textStatus + '</samp></pre>');
             })
-            .always(function() { 
+            .always(function() {
                 enableEditor(aceEditor)
                 updateMode();
                 runRequest = null;
                 errorwindow.scrollTop(0);
             });
     }
-    
+
     function updateTransferButton() {
         if (showsTransferButton) {
             // transferButton.show();
@@ -222,7 +221,7 @@
         });
         errorMarkers = [];
     }
-    
+
     function handleRunResponse(response) {
         errorwindow.html('');
         if (response.error) {
@@ -236,7 +235,7 @@
             aceOutput.getSession().setValue(response.output);
         }
         updateTransferButton();
-        
+
         if (response.log !== null) {
             errorwindow.append('<pre><samp>Execution trace:</pre></samp>' )
             $.each(response.log, function(i,message) {
@@ -244,7 +243,7 @@
             })
         }
     }
-    
+
     function optionalLocalStorageGetItem(key) {
         try {
             return localStorage.getItem(key);
@@ -260,7 +259,7 @@
             // ignore
         }
     }
-    
+
     function updateMode() {
         aceOutput.getSession().setMode(outputMode ? "ace/mode/rlsrl" : null);
     }
@@ -304,7 +303,7 @@
         if (programRequest !== null) return;
         var program = program;
         lang = program.split('.').pop();
-        
+
         programRequest = $.ajax({
                 mimeType: 'text/plain; charset=x-user-defined',
                 dataType: "text",
@@ -319,7 +318,7 @@
             .fail(function(hxr, textStatus, errorThrown) {
                 errorwindow.html('<pre><samp>Request failed with error: ' + textStatus + '</samp></pre>');
             })
-            .always(function() { 
+            .always(function() {
                 programRequest = null;
                 errorwindow.scrollTop(0);
             });
@@ -328,7 +327,7 @@
         setProgram($('option:selected', e.target).val());
         $('#program').val($('option:disabled', e.target).val());
     }
-    
+
     function disableEditor(editor) {
         editor.setReadOnly(true);
         editor.renderer.$cursorLayer.element.style.display = "none";
@@ -339,7 +338,7 @@
         editor.renderer.$cursorLayer.element.style.display = "";
         editor.setHighlightActiveLine(true);
     }
-    
+
     $().ready(function() {
         main            = $("#main");
         editor          = $("#editor");
@@ -363,7 +362,7 @@
         themeSelect     = $("#theme");
         programSelect   = $("#program");
         navbar          = $("#control");
-        
+
         aceEditor = ace.edit("editor");
         aceOutput = ace.edit("outputwindow")
         setTheme();
@@ -401,7 +400,7 @@
             },
             readOnly: true
         });
-        
+
         // configure output window
         disableEditor(aceOutput)
         aceOutput.renderer.setShowGutter(false);
@@ -410,7 +409,7 @@
         // set themelist
         var themeList = ace.require("ace/ext/themelist");
         populateThemeSelect(themeList, themeSelect);
-        
+
         // set programlist
         populateProgramSelect(programSelect)
 
@@ -458,7 +457,7 @@
                 aceEditor.getSession().setValue(script);
             }
         }
-        
+
         // what highlighting to use in output window
         aceEditor.getSession().setMode("ace/mode/rlsrl");
         outputMode = null;
@@ -469,7 +468,7 @@
         var log = optionalLocalStorageGetItem("log");
         if (log == "true")
             logCheckBox.prop('checked', true);
-        
+
         aceEditor.getSession().on("change", function() {
             var script = aceEditor.getSession().getValue();
             optionalLocalStorageSetItem("script", script);
