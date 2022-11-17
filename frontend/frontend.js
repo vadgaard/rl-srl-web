@@ -113,11 +113,12 @@
     }
 
     function currentScriptToUrl() {
-        return window.location.hostname + '/?script=' + encodeURIComponent(aceEditor.getSession().getValue());
+        return window.location.hostname + '/?lang=' + lang + '&script=' + encodeURIComponent(aceEditor.getSession().getValue());
     }
 
     function onShareClickHandler() {
         var url = currentScriptToUrl();
+        console.log(url);
 
         if (url.length > 5000) {
             errorwindow.html(

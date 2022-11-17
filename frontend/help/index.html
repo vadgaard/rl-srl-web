@@ -525,19 +525,18 @@ j := goto l
 int v int w
 
 start: entry
-  n ^= 16
-  w ^= 1
-goto loop
+    n ^= 16
+    w ^= 1
+goto loop_block
 
-loop: fi (v = 0) start loop
-  v += w
-  swap v w
-  n -= 1
-if (n = 0 || v &gt; w) end loop
+loop_block: fi (v = 0) start loop_block
+    v += w
+    swap v w
+    n -= 1
+if (n = 0 || v &gt; w) end loop_block
 
-end: from loop
-exit
-</code>
+end: from loop_block
+exit</code>
 </pre>
       </center>
 
@@ -603,12 +602,12 @@ int v int w
 
 n ^= 16
 w ^= 1
-from (v = 0) do
-  v += w
-  swap v w
-  n -= 1
+from v = 0 do
+    v += w
+    swap v w
+    n -= 1
 loop skip
-until (n = 0 || v &gt; w)
+until n = 0 || v &gt; w
 </code>
 </pre>
       </center>
@@ -658,37 +657,34 @@ until (n = 0 || v &gt; w)
       <p>Let us consider the following SRL program:</p>
       <center>
         <pre><code class="language-rl-srl">int n
-int v int w
+int v
 
-n ^= 16
-w ^= 1
-from (v = 0) do
-  v += w
-  swap v w
-  n -= 1
+n ^= 10
+
+from v = 0 do
+    v += n
+    n -= 1
 loop skip
-until (n = 0 || v &gt; w)
+until n = 0
 </code>
 </pre>
       </center>
       <p>
         In this example, the initial state (or the "input" to the program) is
-        simply <i>n := 16</i>. Running the inverter on this program, we get the
+        simply <i>n := 10</i>. Running the inverter on this program, we get the
         following:
       </p>
       <center>
         <pre><code class="language-rl-srl">int n
-int v int w
+int v
 
-from (n = 0 || v &gt; w) do
-  n += 1
-  swap v w
-  v -= w
-loop
-  skip
+from (n = 0) do
+    n += 1
+    v -= n
+loop skip
 until (v = 0)
-w ^= 1
-n ^= 16
+
+n ^= 10
 </code>
 </pre>
       </center>
@@ -700,27 +696,23 @@ n ^= 16
       </p>
       <center>
         <pre><code class="language-rl-srl">int n
-int v int w
+int v
 
-v ^= 987
-w ^= 1597
+v ^= 55
 
-from (n = 0 || v &gt; w) do
-  n += 1
-  swap v w
-  v -= w
-loop
-  skip
+from (n = 0) do
+    n += 1
+    v -= n
+loop skip
 until (v = 0)
-w ^= 1
 </code>
 </pre>
       </center>
 
       <p>
-        Running this program would result in an end state with <i>n := 16</i> as
-        expected; setting <i>v := 6765</i>, <i>w := 10946</i> would result in
-        and end state with <i>n := 20</i>, etc.
+        Running this program would result in an end state with <i>n := 10</i> as
+        expected; setting <i>v := 276</i> would result in
+        and end state with <i>n := 23</i>, etc.
       </p>
 
       <h2><a name="Translation">Translation</a></h2>
