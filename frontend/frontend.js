@@ -122,13 +122,13 @@
         var url = currentScriptToUrl();
         console.log(url);
 
-        if (url.length > 5000) {
-            errorwindow.html(
-            "<p><a href='" + url + "'>" + url + "</a></p>" +
-            "<p>Your program is too long for the URL to be shortened.</p>" +
-            "<p>The encoded (unshortened) URL must be 5,000 characters or less.</p>");
-            return;
-        }
+        // if (url.length > 5000) {
+        //     errorwindow.html(
+        //     "<p><a href='" + url + "'>" + url + "</a></p>" +
+        //     "<p>Your program is too long for the URL to be shortened.</p>" +
+        //     "<p>The encoded (unshortened) URL must be 5,000 characters or less.</p>");
+        //     return;
+        // }
 
         errorwindow.html('');
 
@@ -146,11 +146,11 @@
                     errorwindow.append('<p>Something went wrong while shortening the URL.</p>');
             })
             .fail(function(xhr, textStatus, errorThrown) {
-                errorwindow.append('<p>Request failed with error: ' + textStatus + '</p>');
+                errorwindow.append('<p>Failed to shorten the URL. Note that (encoded) URLs longer than 5,000 characters cannot be shortened.</p>');
             }).
             always(function() {
                 errorwindow.append("<p>Here is your link: <a href='" + url + "'>" + url + "</a></p>") ;
-                errorwindow.append("<p><i>If you're especially proud of this program, consider contributing to the list of example programs by sending the (shortened) URL to <a href='mailto:&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;?subject=" + encodeURIComponent('RL/SRL Program') + "&body=" + encodeURIComponent(url) + "'>&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;</a>.</i></p>") ;
+                errorwindow.append("<p><i>If you're especially proud of this program, consider contributing to the list of example programs by sending the URL to <a href='mailto:&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;?subject=" + encodeURIComponent('RL/SRL Program') + "&body=" + encodeURIComponent(url) + "'>&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;</a>.</i></p>") ;
             });
     }
 
