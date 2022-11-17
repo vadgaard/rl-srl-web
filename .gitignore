@@ -3,3 +3,4 @@
 Makefile
 dist-newstyle
 rl-srl-web.cabal
+docker-composy.yml
