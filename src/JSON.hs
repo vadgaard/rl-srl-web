@@ -3,7 +3,8 @@
 module JSON where
 
 import Data.Aeson
-import Data.Aeson.Types
+    ( Value(String, Null), ToJSON(toJSON), object, KeyValue((.=)) )
+import Data.Aeson.Types ( Pair )
 
 import Common.Error ( Error(..) )
 import Common.AST ( VarTab, showTab)
@@ -13,6 +14,8 @@ import SRL.AST ( SRLProgram )
 
 badRequest :: Value
 badRequest = object ["output" .= Null, "log" .= Null, "error" .= String "Bad request"]
+requestTimeout :: Value
+requestTimeout = object ["output" .= Null, "log" .= Null, "error" .= String "Timed out"]
 
 class ToKeyValue a where
     toKeyValue :: a -> [Pair]

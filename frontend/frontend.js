@@ -137,7 +137,7 @@
                    + encodeURIComponent(url),
               method: "GET",
               dataType: "json",
-              timeout: 8000
+              timeout: 10000
             })
             .done(function(response) {
                 if ("shorturl" in response)
@@ -214,7 +214,7 @@
                   script: aceEditor.getValue(),
                   log: logCheckBox.prop('checked').toString()
               },
-              timeout: 8000
+              // timeout: 10000
             })
             .done( function(response) {
                 handleRunResponse(response);
@@ -351,7 +351,7 @@
                 dataType: "text",
                 url: './programs/' + program,
                 method: 'GET',
-                timeout: 8000
+                timeout: 10000
             })
             .done( function(programText) {
                 aceEditor.getSession().setValue(programText);
