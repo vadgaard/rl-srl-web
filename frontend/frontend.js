@@ -150,7 +150,7 @@
             }).
             always(function() {
                 errorwindow.append("<p>Here is your link: <a href='" + url + "'>" + url + "</a></p>") ;
-                errorwindow.append("<p>If you're especially proud of this program, consider contributing to the list of example programs by sending the (shortened) URL to <a href='mailto:&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;?subject=" + encodeURIComponent('RL/SRL Program') + "&body=" + encodeURIComponent(url) + "'>&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;</a>.</p>") ;
+                errorwindow.append("<p><i>If you're especially proud of this program, consider contributing to the list of example programs by sending the (shortened) URL to <a href='mailto:&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;?subject=" + encodeURIComponent('RL/SRL Program') + "&body=" + encodeURIComponent(url) + "'>&#114;&#101;&#118;&#64;&#118;&#97;&#100;&#103;&#46;&#105;&#111;</a>.</i></p>") ;
             });
     }
 
