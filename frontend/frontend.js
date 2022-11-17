@@ -112,6 +112,44 @@
         runProgram('run');
     }
 
+    function currentScriptToUrl() {
+        return window.location.hostname + '/?script=' + encodeURIComponent(aceEditor.getSession().getValue());
+    }
+
+    function onShareClickHandler() {
+        var url = currentScriptToUrl();
+
+        if (url.length > 5000) {
+            errorwindow.html(
+            "<p><a href='" + url + "'>" + url + "</a></p>" +
+            "<p>Your program is too long for the URL to be shortened.</p>" +
+            "<p>The encoded (unshortened) URL must be 5,000 characters or less.</p>");
+            return;
+        }
+
+        errorwindow.html('');
+
+        $.ajax(
+            { url: "https://is.gd/create.php?format=json&url="
+                   + encodeURIComponent(url),
+              method: "GET",
+              dataType: "json",
+              timeout: 8000
+            })
+            .done(function(response) {
+                if ("shorturl" in response)
+                    url = response.shorturl;
+                else
+                    errorwindow.append('<p>Something went wrong while shortening the URL.</p>');
+            })
+            .fail(function(xhr, textStatus, errorThrown) {
+                errorwindow.append('<p>Request failed with error: ' + textStatus + '</p>');
+            }).
+            always(function() {
+                errorwindow.append("<p>Here is your link: <a href='" + url + "'>" + url + "</a></p>") ;
+            });
+    }
+
     function onInvertClickHandler() {
         resultLang = lang;
         outputMode = lang;
@@ -352,11 +390,8 @@
         runButton       = $("#run");
         invertButton    = $("#invert");
         translateButton = $("#translate");
-        transferButton  = $("#transfer"); // transferButton.hide();
-        saveButton      = $("#save");
+        transferButton  = $("#transfer");
         shareButton     = $("#share");
-        openButton      = $("#open");
-        reportButton    = $("#report");
         helpButton      = $("#help");
         logCheckBox     = $("#log");
         themeSelect     = $("#theme");
@@ -429,6 +464,7 @@
         translateButton.click(onTranslateClickHandler);
         transferButton.click(onTransferClickHandler);
         helpButton.click(function() { window.open("/help");  });
+        shareButton.click(onShareClickHandler);
         logCheckBox.click(onLogClickHandler);
         themeSelect.change(onThemeSelectChange);
         programSelect.change(onProgramSelectChange);
