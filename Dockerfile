@@ -39,6 +39,6 @@ RUN apt-get update
 # run the thing
 RUN mkdir -p /opt/rl-srl-web
 COPY --from=builder /opt/rl-srl-web/rl-srl-web /opt/rl-srl-web/rl-srl-web
-COPY frontend /opt/rl-srl-web/frontend
+# COPY frontend /opt/rl-srl-web/frontend
 WORKDIR /opt/rl-srl-web
-ENTRYPOINT ["./rl-srl-web"].
+ENTRYPOINT ["./rl-srl-web"]
