@@ -14,17 +14,17 @@ import RL.Interp
 import RL.Inversion
 import RL.Translation
 
-runProgram :: String -> IO (Either Error VarTab, Log)
+runProgram :: String -> (Either Error VarTab, Log)
 runProgram source =
   case parseProgram source of
-    Left err -> return (Left err, emptyLog)
-    Right program -> return $ runAST program
+    Left err -> (Left err, emptyLog)
+    Right program -> runAST program
 
-invertProgram :: String -> IO (Either Error RLProgram)
-invertProgram source = return $ handleSource source invert
+invertProgram :: String -> Either Error RLProgram
+invertProgram source = handleSource source invert
 
-translateProgram :: String -> IO (Either Error SRL.SRLProgram)
-translateProgram source = return $ handleSource source translate
+translateProgram :: String -> Either Error SRL.SRLProgram
+translateProgram source = handleSource source translate
 
 handleSource :: String -> (RLProgram -> a) -> Either Error a
 handleSource source handler =

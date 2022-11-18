@@ -122,14 +122,6 @@
         var url = currentScriptToUrl();
         console.log(url);
 
-        // if (url.length > 5000) {
-        //     errorwindow.html(
-        //     "<p><a href='" + url + "'>" + url + "</a></p>" +
-        //     "<p>Your program is too long for the URL to be shortened.</p>" +
-        //     "<p>The encoded (unshortened) URL must be 5,000 characters or less.</p>");
-        //     return;
-        // }
-
         errorwindow.html('');
 
         $.ajax(
@@ -214,7 +206,7 @@
                   script: aceEditor.getValue(),
                   log: logCheckBox.prop('checked').toString()
               },
-              // timeout: 10000
+              timeout: 10000
             })
             .done( function(response) {
                 handleRunResponse(response);
