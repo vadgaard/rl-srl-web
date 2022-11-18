@@ -45,6 +45,7 @@ ghc-options:
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
+- -fno-omit-yields
 
 library:
   source-dirs: src
