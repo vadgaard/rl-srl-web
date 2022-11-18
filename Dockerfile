@@ -9,8 +9,12 @@ ENV PATH /root/.local/bin:$PATH
 # update and install important packages
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends apt-utils
+
+RUN apt-get update
 RUN apt-get install -y --no-install-recommends gnupg ca-certificates dirmngr curl git
-RUN apt-get install -y --no-install-recommends zlib1g-dev libtinfo-dev libsqlite3-dev g++ netbase xz-utils libgmp-dev make
+RUN apt-get install -y --no-install-recommends build-essential zlib1g-dev libtinfo-dev libsqlite3-dev g++ gcc netbase xz-utils libgmp-dev make
+
+RUN gcc --version
 
 # install haskell stack
 RUN curl -sSL https://get.haskellstack.org/ | sh
@@ -19,7 +23,7 @@ RUN curl -sSL https://get.haskellstack.org/ | sh
 RUN mkdir -p /opt/rl-srl-web
 COPY rl-srl-web.cabal /opt/rl-srl-web/
 COPY stack.yaml /opt/rl-srl-web/
-# COPY package.yaml /opt/rl-srl-web/
+COPY package.yaml /opt/rl-srl-web/
 COPY LICENSE /opt/rl-srl-web/
 COPY README.md /opt/rl-srl-web/
 
@@ -32,6 +36,7 @@ COPY app /opt/rl-srl-web/app
 COPY test /opt/rl-srl-web/test
 RUN stack install --no-interleaved-output
 RUN /bin/bash -c "cp $(stack path --local-install-root)/bin/rl-srl-web ."
+
 
 FROM debian:buster
 
