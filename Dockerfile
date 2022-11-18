@@ -17,8 +17,9 @@ RUN curl -sSL https://get.haskellstack.org/ | sh
 
 # rl-srl-web
 RUN mkdir -p /opt/rl-srl-web
-COPY package.yaml /opt/rl-srl-web/
+COPY rl-srl-web.cabal /opt/rl-srl-web/
 COPY stack.yaml /opt/rl-srl-web/
+# COPY package.yaml /opt/rl-srl-web/
 COPY LICENSE /opt/rl-srl-web/
 COPY README.md /opt/rl-srl-web/
 
