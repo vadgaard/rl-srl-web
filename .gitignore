@@ -2,5 +2,4 @@
 *~
 Makefile
 dist-newstyle
-rl-srl-web.cabal
 docker-compose.yml
