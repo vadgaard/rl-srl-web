@@ -8,6 +8,7 @@ ENV PATH /root/.local/bin:$PATH
 
 # update and install important packages
 RUN apt-get update
+RUN apt-get install -y --no-install-recommends apt-utils
 RUN apt-get install -y --no-install-recommends gnupg ca-certificates dirmngr curl git
 RUN apt-get install -y --no-install-recommends zlib1g-dev libtinfo-dev libsqlite3-dev g++ netbase xz-utils libgmp-dev make
 
