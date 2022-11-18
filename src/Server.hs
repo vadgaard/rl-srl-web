@@ -20,7 +20,9 @@ import Network.Wai.Handler.Warp
     ( setPort, setTimeout, defaultSettings )
 import System.Environment ( getEnv )
 import System.Directory ( listDirectory )
+import System.Timeout ( timeout )
 import Control.Monad.IO.Class ( liftIO )
+import Control.Concurrent ( setNumCapabilities )
 import Data.List ( sort )
 import qualified Data.Text.Lazy as TL
 
@@ -35,9 +37,12 @@ import JSON
 
 timeoutTimeSec :: Int
 timeoutTimeSec = 8
+timeoutTimeUSec :: Int
+timeoutTimeUSec = timeoutTimeSec * 1000000
 
 server :: IO ()
 server = do
+  setNumCapabilities 2
   port <- read <$> getEnv "PORT"
 
   let options = Options 1 $ setTimeout timeoutTimeSec (setPort port defaultSettings)
@@ -62,37 +67,61 @@ server = do
         mode <- TL.unpack <$> param "mode" `rescue` (\_ -> return "run")
         setLog <- TL.unpack <$> param "log" `rescue` (\_ -> return "false")
         case lang of
-          "rl" -> case mode of
-            "run" -> let (res, trace) = RL.Interface.runProgram script
-              in case res of
-                Left err -> case setLog of
-                  "true" -> json $ ErrorResult (err, trace)
-                  _      -> json err
-                Right vtab -> case setLog of
-                  "true" -> json $ RunResult (vtab, trace)
-                  _      -> json $ VarTabContainer vtab
-            "invert" -> case RL.Interface.invertProgram script of
-                Left err -> json err
-                Right program -> json program
-            "translate" -> case RL.Interface.translateProgram script of
-                Left err -> json err
-                Right program -> json program
+          "rl"  -> case mode of
+            "run" -> do
+              response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.runProgram script
+              case response of
+                Nothing -> json requestTimeout
+                Just (res, trace) ->
+                  case res of
+                    Left err -> case setLog of
+                      "true" -> json $ ErrorResult (err, trace)
+                      _      -> json err
+                    Right vtab -> case setLog of
+                      "true" -> json $ RunResult (vtab, trace)
+                      _      -> json $ VarTabContainer vtab
+            "invert" -> do
+              response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.invertProgram script
+              case response of
+                Nothing -> json requestTimeout
+                Just res -> case res of
+                  Left err -> json err
+                  Right program -> json program
+            "translate" -> do
+              response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.translateProgram script
+              case response of
+                Nothing -> json requestTimeout
+                Just res -> case res of
+                  Left err -> json err
+                  Right program -> json program
             _ -> json badRequest
           "srl" -> case mode of
-            "run" -> let (res, trace) = SRL.Interface.runProgram script
-              in case res of
-                Left err -> case setLog of
-                  "true" -> json $ ErrorResult (err, trace)
-                  _      -> json err
-                Right vtab -> case setLog of
-                  "true" -> json $ RunResult (vtab, trace)
-                  _      -> json $ VarTabContainer vtab
-            "invert" -> case SRL.Interface.invertProgram script of
-                Left err -> json err
-                Right program -> json program
-            "translate" -> case SRL.Interface.translateProgram script of
-                Left err -> json err
-                Right program -> json program
+            "run" -> do
+              response <- liftIO $ timeout timeoutTimeUSec $ SRL.Interface.runProgram script
+              case response of
+                Nothing -> json requestTimeout
+                Just (res, trace) ->
+                  case res of
+                    Left err -> case setLog of
+                      "true" -> json $ ErrorResult (err, trace)
+                      _      -> json err
+                    Right vtab -> case setLog of
+                      "true" -> json $ RunResult (vtab, trace)
+                      _      -> json $ VarTabContainer vtab
+            "invert" -> do
+              response <- liftIO $ timeout timeoutTimeUSec $ SRL.Interface.invertProgram script
+              case response of
+                Nothing -> json requestTimeout
+                Just res -> case res of
+                  Left err -> json err
+                  Right program -> json program
+            "translate" -> do
+              response <- liftIO $ timeout timeoutTimeUSec $ SRL.Interface.translateProgram script
+              case response of
+                Nothing -> json requestTimeout
+                Just res -> case res of
+                  Left err -> json err
+                  Right program -> json program
             _ -> json badRequest
           _ -> json badRequest
 
