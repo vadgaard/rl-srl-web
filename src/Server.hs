@@ -36,7 +36,7 @@ import JSON
       requestTimeout )
 
 timeoutTimeSec :: Int
-timeoutTimeSec = 8
+timeoutTimeSec = 6
 timeoutTimeUSec :: Int
 timeoutTimeUSec = timeoutTimeSec * 1000000
 
@@ -69,10 +69,14 @@ server = do
         case lang of
           "rl"  -> case mode of
             "run" -> do
-              response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.runProgram script
+              liftIO $ putStrLn "Testing timeout now!"
+              response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.runProgram script -- RL.Interface.timeoutTest
               case response of
-                Nothing -> json requestTimeout
-                Just (res, trace) ->
+                Nothing -> do
+                  liftIO $ putStrLn "It timed out!"
+                  json requestTimeout
+                Just (res, trace) -> do
+                  liftIO $ putStrLn "It didn't time out!"
                   case res of
                     Left err -> case setLog of
                       "true" -> json $ ErrorResult (err, trace)
@@ -81,19 +85,30 @@ server = do
                       "true" -> json $ RunResult (vtab, trace)
                       _      -> json $ VarTabContainer vtab
             "invert" -> do
+              liftIO $ putStrLn "Testing timeout now!"
               response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.invertProgram script
+              liftIO $ print response
               case response of
-                Nothing -> json requestTimeout
-                Just res -> case res of
-                  Left err -> json err
-                  Right program -> json program
+                Nothing -> do
+                  liftIO $ putStrLn "It timed out!"
+                  json requestTimeout
+                Just res -> do
+                  liftIO $ putStrLn "It didn't time out!"
+                  case res of
+                    Left err -> json err
+                    Right program -> json program
             "translate" -> do
+              liftIO $ putStrLn "Testing timeout now!"
               response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.translateProgram script
               case response of
-                Nothing -> json requestTimeout
-                Just res -> case res of
-                  Left err -> json err
-                  Right program -> json program
+                Nothing -> do
+                  liftIO $ putStrLn "It timed out!"
+                  json requestTimeout
+                Just res -> do
+                  liftIO $ putStrLn "It didn't time out!"
+                  case res of
+                    Left err -> json err
+                    Right program -> json program
             _ -> json badRequest
           "srl" -> case mode of
             "run" -> do

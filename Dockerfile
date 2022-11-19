@@ -40,7 +40,7 @@ RUN /bin/bash -c "cp $(stack path --local-install-root)/bin/rl-srl-web ."
 
 FROM debian:buster
 
-HEALTHCHECK --interval=30s --start-period=5s --timeout=10s CMD curl -f https://rev.vadg.io/ || exit 1
+HEALTHCHECK --interval=30s --timeout=10s CMD curl -f https://rev.vadg.io/ || exit 1
 
 # set the port
 ENV PORT 3000

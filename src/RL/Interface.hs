@@ -1,7 +1,8 @@
 module RL.Interface (
     runProgram,
     invertProgram,
-    translateProgram
+    translateProgram,
+    timeoutTest
 ) where
 
 import Common.Log
@@ -16,18 +17,26 @@ import RL.Translation
 
 runProgram :: String -> IO (Either Error VarTab, Log)
 runProgram source =
-  case parseProgram source of
-    Left err -> return (Left err, emptyLog)
-    Right program -> return $ runAST program
+  let res = case parseProgram source of
+        Left err -> (Left err, emptyLog)
+        Right program -> runAST program
+    in print res >> return res
 
 invertProgram :: String -> IO (Either Error RLProgram)
-invertProgram source = return $ handleSource source invert
+invertProgram source =
+  let res = handleSource source invert in print res >> return res
 
 translateProgram :: String -> IO (Either Error SRL.SRLProgram)
-translateProgram source = return $ handleSource source translate
+translateProgram source =
+  let res = handleSource source translate in print res >> return res
 
 handleSource :: String -> (RLProgram -> a) -> Either Error a
 handleSource source handler =
   case parseProgram source of
     Left err -> Left err
     Right program -> Right $ handler program
+
+timeoutTest :: IO (Either Error VarTab, Log)
+timeoutTest = do
+  print [1..]
+  return $ (Right emptyVarTab, Log emptyVarTab [MsgInfo "test"])

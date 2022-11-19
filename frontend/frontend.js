@@ -17,6 +17,8 @@
     // position of vertical splitter as a fraction of whole page
     var vpos;
 
+    const timeoutTime = 15000; // seconds
+
     function updateLayout() {
         var w = main.width();
         var h = main.height();
@@ -129,7 +131,7 @@
                    + encodeURIComponent(url),
               method: "GET",
               dataType: "json",
-              timeout: 10000
+              timeout: timeoutTime
             })
             .done(function(response) {
                 if ("shorturl" in response)
@@ -206,7 +208,7 @@
                   script: aceEditor.getValue(),
                   log: logCheckBox.prop('checked').toString()
               },
-              timeout: 10000
+              timeout: timeoutTime
             })
             .done( function(response) {
                 handleRunResponse(response);
@@ -343,7 +345,7 @@
                 dataType: "text",
                 url: './programs/' + program,
                 method: 'GET',
-                timeout: 10000
+                timeout: timeoutTime
             })
             .done( function(programText) {
                 aceEditor.getSession().setValue(programText);
