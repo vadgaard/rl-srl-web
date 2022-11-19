@@ -70,7 +70,7 @@ server = do
           "rl"  -> case mode of
             "run" -> do
               liftIO $ putStrLn "Testing timeout now!"
-              response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.runProgram script -- RL.Interface.timeoutTest
+              response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.runProgram script
               case response of
                 Nothing -> do
                   liftIO $ putStrLn "It timed out!"

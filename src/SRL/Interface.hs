@@ -16,10 +16,10 @@ import SRL.Translation
 
 runProgram :: String -> IO (Either Error VarTab, Log)
 runProgram source =
-  let res = case parseProgram source of
+  let (res, log) = case parseProgram source of
         Left err -> (Left err, emptyLog)
         Right program -> runAST program
-    in print res >> return res
+    in print res >> return (res, log)
 
 invertProgram :: String -> IO (Either Error SRLProgram)
 invertProgram source =
