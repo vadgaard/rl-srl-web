@@ -70,10 +70,14 @@ server = do
         case lang of
           "rl"  -> case mode of
             "run" -> do
+              liftIO $ putStrLn "Testing timeout!"
               response <- liftIO $ race (threadDelay timeoutTimeUSec) $ RL.Interface.runProgram script
               case response of
-                Left _ -> json requestTimeout
-                Right (res, trace) ->
+                Left _ -> do
+                  liftIO $ putStrLn "Timed out!"
+                  json requestTimeout
+                Right (res, trace) -> do
+                  liftIO $ putStrLn "Did not time out!"
                   case res of
                     Left err -> case setLog of
                       "true" -> json $ ErrorResult (err, trace)

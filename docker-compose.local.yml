@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  rl-srl-web-local:
+    container_name: local.rev.vadg.io
+    expose:
+      - 3000
+    volumes:
+      - '$HOME/nginx-proxy/rl-srl-web/frontend:/opt/rl-srl-web/frontend'
+    image: vadgaard/rl-srl-web-local:latest
+    restart: always
+    environment:
+      VIRTUAL_HOST: local.rev.vadg.io
+      LETSENCRYPT_HOST: local.rev.vadg.io
+      LETSENCRYPT_EMAIL: rev@vadg.io
+    network_mode: bridge
+    cpus: 0.2
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
+

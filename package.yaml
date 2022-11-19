@@ -46,6 +46,7 @@ ghc-options:
 - -Wpartial-fields
 - -Wredundant-constraints
 - -fno-omit-yields
+- -threaded
 
 library:
   source-dirs: src

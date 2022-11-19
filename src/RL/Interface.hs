@@ -5,8 +5,6 @@ module RL.Interface (
 ) where
 
 import Common.Log
-
-
 import qualified SRL.AST as SRL
 
 import RL.Parser
@@ -16,15 +14,18 @@ import RL.Translation
 
 runProgram :: String -> IO (Either Error VarTab, Log)
 runProgram source =
-  case parseProgram source of
-    Left err -> return (Left err, emptyLog)
-    Right program -> return $ runAST program
+  let (res, log) = case parseProgram source of
+        Left err -> (Left err, emptyLog)
+        Right program -> runAST program
+    in print res >> return (res, log)
 
 invertProgram :: String -> IO (Either Error RLProgram)
-invertProgram source = return $ handleSource source invert
+invertProgram source =
+  let res = handleSource source invert in print res >> return res
 
 translateProgram :: String -> IO (Either Error SRL.SRLProgram)
-translateProgram source = return $ handleSource source translate
+translateProgram source =
+  let res = handleSource source translate in print res >> return res
 
 handleSource :: String -> (RLProgram -> a) -> Either Error a
 handleSource source handler =
