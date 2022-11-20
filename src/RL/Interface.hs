@@ -17,15 +17,15 @@ runProgram source =
   let (res, log) = case parseProgram source of
         Left err -> (Left err, emptyLog)
         Right program -> runAST program
-    in print res >> return (res, log)
+    in res `seq` return (res, log)
 
 invertProgram :: String -> IO (Either Error RLProgram)
 invertProgram source =
-  let res = handleSource source invert in print res >> return res
+  let res = handleSource source invert in res `seq` return res
 
 translateProgram :: String -> IO (Either Error SRL.SRLProgram)
 translateProgram source =
-  let res = handleSource source translate in print res >> return res
+  let res = handleSource source translate in res `seq` return res
 
 handleSource :: String -> (RLProgram -> a) -> Either Error a
 handleSource source handler =

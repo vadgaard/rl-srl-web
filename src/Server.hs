@@ -87,7 +87,6 @@ server = do
             "invert" -> do
               liftIO $ putStrLn "Testing timeout now!"
               response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.invertProgram script
-              liftIO $ print response
               case response of
                 Nothing -> do
                   liftIO $ putStrLn "It timed out!"
