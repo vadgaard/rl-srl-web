@@ -41,7 +41,6 @@ genVecName ttab = -- if null ttab then "x" else (maximum . filter (isPrefixOf "c
         in "ctrl" ++ show (num + 1)
 
 
-
 -- Code generation
 genInit id n      = Step $ Init id [genLit n, genLit n, genLit 3] p
 genFree id n      = Step $ Free id [genLit n, genLit n, genLit 3] p
