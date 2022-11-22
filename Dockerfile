@@ -14,8 +14,6 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends gnupg ca-certificates dirmngr curl git
 RUN apt-get install -y --no-install-recommends build-essential zlib1g-dev libtinfo-dev libsqlite3-dev g++ gcc netbase xz-utils libgmp-dev make
 
-RUN gcc --version
-
 # install haskell stack
 RUN curl -sSL https://get.haskellstack.org/ | sh
 
@@ -40,7 +38,7 @@ RUN /bin/bash -c "cp $(stack path --local-install-root)/bin/rl-srl-web ."
 
 FROM debian:buster
 
-HEALTHCHECK --interval=30s --start-period=5s --timeout=10s CMD curl -f https://rev.vadg.io/ || exit 1
+HEALTHCHECK --interval=30s --timeout=10s CMD curl -f https://rev.vadg.io/ || exit 1
 
 # set the port
 ENV PORT 3000
