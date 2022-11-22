@@ -69,14 +69,14 @@ server = do
         case lang of
           "rl"  -> case mode of
             "run" -> do
-              liftIO $ putStrLn "Testing timeout now!"
+              liftIO $ putStrLn "Running RL program!"
               response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.runProgram script
               case response of
                 Nothing -> do
                   liftIO $ putStrLn "It timed out!"
                   json requestTimeout
                 Just (res, trace) -> do
-                  liftIO $ putStrLn "It didn't time out!"
+                  liftIO $ putStrLn "Executed successfully!"
                   case res of
                     Left err -> case setLog of
                       "true" -> json $ ErrorResult (err, trace)
@@ -85,19 +85,19 @@ server = do
                       "true" -> json $ RunResult (vtab, trace)
                       _      -> json $ VarTabContainer vtab
             "invert" -> do
-              liftIO $ putStrLn "Testing timeout now!"
+              liftIO $ putStrLn "Inverting RL program!"
               response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.invertProgram script
               case response of
                 Nothing -> do
                   liftIO $ putStrLn "It timed out!"
                   json requestTimeout
                 Just res -> do
-                  liftIO $ putStrLn "It didn't time out!"
+                  liftIO $ putStrLn "Inverted successfully!"
                   case res of
                     Left err -> json err
                     Right program -> json program
             "translate" -> do
-              liftIO $ putStrLn "Testing timeout now!"
+              liftIO $ putStrLn "Translating RL program!"
               response <- liftIO $ timeout timeoutTimeUSec $ RL.Interface.translateProgram script
               case response of
                 Nothing -> do
@@ -111,10 +111,14 @@ server = do
             _ -> json badRequest
           "srl" -> case mode of
             "run" -> do
+              liftIO $ putStrLn "Running SRL program!"
               response <- liftIO $ timeout timeoutTimeUSec $ SRL.Interface.runProgram script
               case response of
-                Nothing -> json requestTimeout
-                Just (res, trace) ->
+                Nothing -> do
+                  liftIO $ putStrLn "It timed out!"
+                  json requestTimeout
+                Just (res, trace) -> do
+                  liftIO $ putStrLn "Executed successfully!"
                   case res of
                     Left err -> case setLog of
                       "true" -> json $ ErrorResult (err, trace)
@@ -123,19 +127,29 @@ server = do
                       "true" -> json $ RunResult (vtab, trace)
                       _      -> json $ VarTabContainer vtab
             "invert" -> do
+              liftIO $ putStrLn "Inverting SRL program!"
               response <- liftIO $ timeout timeoutTimeUSec $ SRL.Interface.invertProgram script
               case response of
-                Nothing -> json requestTimeout
-                Just res -> case res of
-                  Left err -> json err
-                  Right program -> json program
+                Nothing -> do
+                  liftIO $ putStrLn "It timed out!"
+                  json requestTimeout
+                Just res -> do
+                  liftIO $ putStrLn "Inverted successfully!"
+                  case res of
+                    Left err -> json err
+                    Right program -> json program
             "translate" -> do
+              liftIO $ putStrLn "Translating SRL program!"
               response <- liftIO $ timeout timeoutTimeUSec $ SRL.Interface.translateProgram script
               case response of
-                Nothing -> json requestTimeout
-                Just res -> case res of
-                  Left err -> json err
-                  Right program -> json program
+                Nothing -> do
+                  liftIO $ putStrLn "It timed out!"
+                  json requestTimeout
+                Just res -> do
+                  liftIO $ putStrLn "It didn't time out!"
+                  case res of
+                    Left err -> json err
+                    Right program -> json program
             _ -> json badRequest
           _ -> json badRequest
 
