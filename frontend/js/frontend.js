@@ -491,11 +491,10 @@
             aceEditor.getSession().setValue(query.script);
         } else {
             var script = optionalLocalStorageGetItem("script");
-            if (script !== null) {
+            if (script !== null)
                 aceEditor.getSession().setValue(script);
-            }
             else
-                setProgram('scratch.srl')
+                setProgram('scratch.srl');
         }
 
         // what highlighting to use in output window
