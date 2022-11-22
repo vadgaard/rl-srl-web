@@ -1,5 +1,6 @@
 .stack-work/
 *~
+redirect/
 Makefile
 dist-newstyle
 docker-compose.yml
