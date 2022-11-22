@@ -325,7 +325,7 @@
 
     function populateProgramSelect(programSelect)
     {
-        $.getJSON('programs', programList => {
+        $.getJSON('programs/list.json', programList => {
             $.each(programList, function(i, program) {
                 $('<option/>',
                   { value : program })

@@ -19,7 +19,6 @@ import Network.Wai.Middleware.Static
 import Network.Wai.Handler.Warp
     ( setPort, setTimeout, defaultSettings )
 import System.Environment ( getEnv )
-import System.Directory ( listDirectory )
 import System.Timeout ( timeout )
 import Control.Monad.IO.Class ( liftIO )
 import Control.Concurrent ( setNumCapabilities )
@@ -52,10 +51,6 @@ server = do
 
       -- top domain
       get "/" $ file "./frontend/index.html"
-
-      -- program list
-      get "/programs" $ do
-        json =<< liftIO (sort <$> listDirectory "./frontend/programs")
 
       -- help section
       get "/help" $ file "./frontend/help/index.html"
