@@ -5,3 +5,4 @@ Makefile
 dist-newstyle
 docker-compose.yml
 docker-compose.local.yml
+stack.yaml.lock
