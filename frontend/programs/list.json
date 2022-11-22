@@ -1,7 +1,7 @@
 [
-  { "file": "acc",       "title": "Accumulated sum"     },
-  { "file": "fac",       "title": "Factorial of n"      },
-  { "file": "fib",       "title": "n'th Fibonacci Pair" },
+  { "file": "acc",       "title": "Accumulated Sum"     },
+  { "file": "fac",       "title": "Factorial"           },
+  { "file": "fib",       "title": "Fibonacci Pair"      },
   { "file": "primefac",  "title": "Prime Factorization" },
   { "file": "squares",   "title": "List of Squares"     }
 ]
