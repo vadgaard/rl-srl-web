@@ -495,9 +495,7 @@
                 aceEditor.getSession().setValue(script);
             }
             else
-                aceEditor.getSession().setValue(
-                    setProgram('scratch.srl');
-                );
+                setProgram('scratch.srl')
         }
 
         // what highlighting to use in output window
