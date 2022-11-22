@@ -496,9 +496,7 @@
             }
             else
                 aceEditor.getSession().setValue(
-                    '// Begin writing your program!\n' +
-                    '// Press the \'Help\' button to\n' +
-                    '// learn about the syntax and more'
+                    setProgram('scratch.srl');
                 );
         }
 
