@@ -6,6 +6,8 @@ import RL.AST as RL
 import SRL.AST as SRL
 
 import qualified Data.HashMap.Strict as M
+import Data.List
+import Data.Char
 
 import Control.Monad.Reader
 
@@ -28,8 +30,16 @@ genLabelMap ttab ast =
   let lm = M.fromList . foldl (\acc (l,b) -> (l,length acc + 1):acc) [] $ ast
     in (genVecName ttab,lm)
 
+-- Find a better way to generate unique variable names
 genVecName :: TypeTab -> String
-genVecName ttab = if null ttab then "x" else (maximum . map fst) ttab ++ "_"
+genVecName ttab = -- if null ttab then "x" else (maximum . filter (isPrefixOf "control") . map fst) ttab ++ "_"
+  case filter (\x -> isPrefixOf "ctrl" x && length x > 4 && all isDigit (drop 4 x)) . map fst $ ttab of
+    [] -> "ctrl0"
+    xs ->
+      let latest = maximum xs
+          num = read $ drop 4 latest
+        in "ctrl" ++ show (num + 1)
+
 
 -- Code generation
 genInit id n      = Step $ Init id [genLit n, genLit n, genLit 3] p

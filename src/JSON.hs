@@ -13,9 +13,9 @@ import RL.AST ( RLProgram )
 import SRL.AST ( SRLProgram )
 
 badRequest :: Value
-badRequest = object ["output" .= Null, "log" .= Null, "error" .= String "Bad request"]
+badRequest = object ["output" .= Null, "log" .= Null, "error" .= String "Error: Bad request"]
 requestTimeout :: Value
-requestTimeout = object ["output" .= Null, "log" .= Null, "error" .= String "Timed out"]
+requestTimeout = object ["output" .= Null, "log" .= Null, "error" .= String "Error: Timeout"]
 
 class ToKeyValue a where
     toKeyValue :: a -> [Pair]

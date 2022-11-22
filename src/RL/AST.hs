@@ -28,11 +28,11 @@ showAST :: TypeTab -> AST -> String
 showAST ttab ast = showTypeTab ttab ++ (intercalate "\n\n" . map (\(l,b) -> l ++ ": " ++ showBlock b)) ast
 
 type Block = (From, [Step], Jump)
-showBlock (f,s,j) = show f ++ "\n  "
+showBlock (f,s,j) = show f ++ ("\n" ++ stdIndent)
                  ++ (
                       if null s
                       then show (Skip (0,0))
-                      else (intercalate "\n  " . map show) s
+                      else (intercalate ("\n" ++ stdIndent) . map show) s
                     ) ++ "\n"
                  ++ show j
 
@@ -42,7 +42,7 @@ data From = From Label Pos
           deriving Eq
 instance Show From where
   show (From l _)     = "from " ++ l
-  show (Fi e l1 l2 _) = "fi " ++ showPar e ++ " " ++ l1 ++ " " ++ l2
+  show (Fi e l1 l2 _) = "fi " ++ show e ++ " " ++ l1 ++ " " ++ l2
   show (Entry _)      = "entry"
 
 data Jump = Goto Label Pos
@@ -51,5 +51,7 @@ data Jump = Goto Label Pos
           deriving Eq
 instance Show Jump where
   show (Goto l _)     = "goto " ++ l
-  show (If e l1 l2 _) = "if "  ++ showPar e ++ " "  ++ l1 ++ " " ++ l2
+  show (If e l1 l2 _) = "if "  ++ show e ++ " "  ++ l1 ++ " " ++ l2
   show (Exit _)       = "exit"
+
+stdIndent = replicate 4 ' '
