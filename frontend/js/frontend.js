@@ -115,7 +115,7 @@
     }
 
     function currentScriptToUrl() {
-        return window.location.hostname + '/' +
+        return LOCAL_URL + '/' +
             '?script=' + encodeURIComponent(aceEditor.getSession().getValue()) +
             '&lang='   + lang;
     }
@@ -200,7 +200,7 @@
         disableEditor(aceEditor);
         aceOutput.getSession().setValue('');
         runRequest = $.ajax(
-            { url: "/api",
+            { url: SERVER_URL + "/api",
               method: "POST",
               data: {
                   lang: lang,
@@ -301,7 +301,7 @@
     }
 
     function getQueryParameters() {
-        var a = window.location.search.substr(1).split('&');
+        var a = window.location.search.substring(1).split('&');
         if (a === "") return {};
         var b = {};
         for (var i = 0; i < a.length; i++) {
@@ -325,7 +325,7 @@
 
     function populateProgramSelect(programSelect)
     {
-        $.getJSON('./programs', programList => {
+        $.getJSON('programs', programList => {
             $.each(programList, function(i, program) {
                 $('<option/>',
                   { value : program })
@@ -343,7 +343,7 @@
         programRequest = $.ajax({
                 mimeType: 'text/plain; charset=x-user-defined',
                 dataType: "text",
-                url: './programs/' + program,
+                url: 'programs/' + program,
                 method: 'GET',
                 timeout: timeoutTime
             })
