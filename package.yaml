@@ -16,7 +16,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/rl-srl-web#readme>
+description: Please see the README on GitHub at <https://github.com/vadgaard/rl-srl-web#readme>
 
 dependencies:
 - base >= 4.14 && < 5
@@ -33,7 +33,6 @@ dependencies:
 - wai-middleware-static >= 0.9.2
 - aeson >= 2.1.1.0
 - warp >= 3.3.11
-# - async >= 2.2.4
 
 ghc-options:
 - -Wall
@@ -45,8 +44,9 @@ ghc-options:
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
-- -fno-omit-yields
-- -threaded
+  #- -fno-omit-yields
+  # - -threaded
+- -O2
 
 library:
   source-dirs: src
