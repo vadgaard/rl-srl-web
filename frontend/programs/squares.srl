@@ -8,3 +8,5 @@ from empty q do
     push n q
 loop skip
 until size q = 10
+
+reverse q

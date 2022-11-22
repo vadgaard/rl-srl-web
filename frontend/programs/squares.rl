@@ -12,4 +12,5 @@ loop_block: fi (empty q) start loop_block
 if (size q = 10) end loop_block
 
 end: from loop_block
+    reverse q
 exit

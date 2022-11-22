@@ -1,13 +1,7 @@
 [
-  "acc.rl",
-  "acc.srl",
-  "fac.rl",
-  "fac.srl",
-  "fib.rl",
-  "fib.srl",
-  "list.json",
-  "primefac.rl",
-  "primefac.srl",
-  "squares.rl",
-  "squares.srl"
+  { "file": "acc",       "title": "Accumulated sum"     },
+  { "file": "fac",       "title": "Factorial of n"      },
+  { "file": "fib",       "title": "n'th Fibonacci Pair" },
+  { "file": "primefac",  "title": "Prime Factorization" },
+  { "file": "squares",   "title": "List of Squares"     }
 ]

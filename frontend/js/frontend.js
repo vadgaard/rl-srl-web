@@ -327,18 +327,22 @@
     {
         $.getJSON('programs/list.json', programList => {
             $.each(programList, function(i, program) {
-                $('<option/>',
-                  { value : program })
-                    .text(program)
-                    .appendTo(programSelect);
+                ['rl', 'srl'].forEach(ex => {
+                    $('<option/>', { value : program.file + '.' + ex })
+                        .text(program.title + ' (' + ex.toUpperCase() + ')')
+                        .appendTo(programSelect);
+                });
             });
         });
     }
     var programRequest = null;
     function setProgram(program) {
         if (programRequest !== null) return;
-        var program = program;
-        lang = program.split('.').pop();
+        var new_lang = program.split('.').pop();
+        if (new_lang !== 'rl' && new_lang !== 'srl') {
+            return;
+        }
+        lang = new_lang;
 
         programRequest = $.ajax({
                 mimeType: 'text/plain; charset=x-user-defined',
@@ -474,7 +478,7 @@
             lang = query.lang
         } else {
             var _lang = optionalLocalStorageGetItem("lang");
-            if (_lang !== null && (_lang == 'rl' || _lang == 'srl')) {
+            if (_lang == 'rl' || _lang == 'srl') {
                 lang = _lang
             }
             else {
@@ -490,6 +494,12 @@
             if (script !== null) {
                 aceEditor.getSession().setValue(script);
             }
+            else
+                aceEditor.getSession().setValue(
+                    '// Begin writing your program!\n' +
+                    '// Press the \'Help\' button to\n' +
+                    '// learn about the syntax and more'
+                );
         }
 
         // what highlighting to use in output window
