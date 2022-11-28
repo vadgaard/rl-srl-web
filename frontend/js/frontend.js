@@ -298,6 +298,7 @@
 
     function updateMode() {
         aceOutput.getSession().setMode(outputMode ? "ace/mode/rlsrl" : null);
+        aceOutput.renderer.setShowGutter(outputMode ? true : false);
     }
 
     function getQueryParameters() {
