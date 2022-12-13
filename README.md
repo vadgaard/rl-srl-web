@@ -1,4 +1,4 @@
-# RL/SRL playground
+# RL/SRL Playground
 
 This is a web interface that allows you to play around with the two reversible programming languages RL (**R**erversible **L**anguage) and SRL (**S**tructured **R**eversible **L**anguage) implemented by me and Anders Frederik Jørgensen as part of our bachelor's thesis. The implementation is from 2018 and was our first experience with Haskell, which in turn means that running time efficiency was not a priority. The web interface, on the other hand, was implemented more recently by myself.
 
