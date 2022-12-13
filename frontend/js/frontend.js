@@ -185,7 +185,7 @@
     }
 
     function setTheme(theme) {
-        var theme = theme || optionalLocalStorageGetItem('theme') || 'ace/theme/chrome';
+        var theme = theme || optionalLocalStorageGetItem('theme') || 'ace/theme/tomorrow_night_eighties';
         aceEditor.setTheme(theme);
         aceOutput.setTheme(theme)
         optionalLocalStorageSetItem('theme', theme);
