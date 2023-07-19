@@ -92,19 +92,15 @@ some useful program transformations.
 
 ## Prerequisites
 
-### Interpreters
 To build and run the interpreters, haskell-stack is required.
 ```bash
 brew install haskell-stack cabal-install ghc # MacOS
 curl -sSL https://get.haskellstack.org/ | sh # Unix
 wget -qO- https://get.haskellstack.org/ | sh # Unix alternative
 ```
-For Windows see [stack documentation](https://docs.haskellstack.org/en/stable/README/).
-```
+For Windows, see [stack documentation](https://docs.haskellstack.org/en/stable/README/).
 
 ## Installing
-
-### Interpreters
 
 The interpreters can be built with
 ```bash
@@ -118,10 +114,6 @@ make install
 
 ## Usage
 
-### Interpreters
-
-#### Help
-To display the help message, run either `rl` or `srl` providing the `--help` flag.
 ```bash
 The Glorious [S]RL Interpreter System, version 1.0.0
 
@@ -150,9 +142,3 @@ Common flags:
 [s]rl blocks [OPTIONS] [FILE]
   Print the number of blocks in the program
 ```
-
-#### Syntax highlighting
-
-We have defined syntax highlighting for each of the two languages for Vim. Move `vim/syntax/(s)rl.vim` to `.vim/syntax` and `vim/ftdetect/(s)rl.vim` to `.vim/ftdetect`.
-
-![syntax highlighting](https://imgur.com/X8KVpHP.png)
